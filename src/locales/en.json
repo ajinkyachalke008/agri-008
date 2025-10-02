@@ -1,0 +1,71 @@
+{
+  "hero": {
+    "title": "Smart Advisory for Smarter Farming",
+    "subtitle": "Personalized, real-time farming advice for better yields and sustainability.",
+    "cta": {
+      "primary": "Get Started",
+      "secondary": "See How It Works"
+    },
+    "valueProps": [
+      "AI-driven",
+      "Offline-ready",
+      "Voice support (Marathi)"
+    ],
+    "stats": {
+      "yield": "+20%",
+      "yieldLabel": "Crop Yield",
+      "water": "-30%",
+      "waterLabel": "Water Use",
+      "pesticide": "-15%",
+      "pesticideLabel": "Pesticide Use"
+    }
+  },
+  "dashboard": {
+    "title": "Smart Advisory Dashboard",
+    "subtitle": "Real-time insights at your fingertips",
+    "todayAdvice": "Today's Advice",
+    "lastSync": "Last synced",
+    "farmProfile": "Farm Profile",
+    "weatherWidget": "Weather Forecast",
+    "soilHealth": "Soil Health",
+    "pestAlerts": "Pest Alerts",
+    "cropRecommendations": "Crop Recommendations",
+    "actionPanel": "Action Panel"
+  },
+  "permission": {
+    "location": {
+      "title": "Share location for tailored advice?",
+      "body": "We only use location to tailor farm advice and it will not be shared without your consent.",
+      "allow": "Allow",
+      "deny": "Not Now"
+    }
+  },
+  "weather": {
+    "sevenDay": "7-Day Forecast",
+    "thirtyDay": "View 30-Day Outlook",
+    "today": "Today",
+    "hourly": "Hourly Details",
+    "temp": "Temperature",
+    "precip": "Precipitation",
+    "wind": "Wind",
+    "sunrise": "Sunrise",
+    "sunset": "Sunset"
+  },
+  "advisory": {
+    "irrigate": "Irrigate for 30 minutes",
+    "fertilize": "Apply fertilizer",
+    "pestControl": "Check for pests",
+    "acknowledge": "Acknowledge",
+    "markDone": "Mark Done",
+    "askExpert": "Ask Expert",
+    "share": "Share"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
