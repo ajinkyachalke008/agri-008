@@ -67,5 +67,60 @@
     "close": "बंद करा",
     "save": "जतन करा",
     "cancel": "रद्द करा"
+  },
+  "scanners": {
+    "hub": {
+      "title": "स्मार्ट स्कॅनर",
+      "subtitle": "तुमच्या शेतासाठी AI-आधारित विश्लेषण",
+      "soil": {
+        "title": "माती आरोग्य स्कॅनर",
+        "description": "मातीतील खनिजांचे विश्लेषण व सेंद्रिय शिफारसी",
+        "cta": "माती स्कॅन करा"
+      },
+      "disease": {
+        "title": "रोग शोधक",
+        "description": "पिकांचे रोग ओळखा व उपचार योजना मिळवा",
+        "cta": "पीक स्कॅन करा"
+      }
+    },
+    "benefits": {
+      "instant": "त्वरित परिणाम",
+      "organic": "सेंद्रिय उपाय",
+      "expert": "तज्ञ AI",
+      "safe": "सुरक्षित उपचार"
+    },
+    "upload": {
+      "title": "फोटो काढा किंवा अपलोड करा",
+      "camera": "कॅमेरा",
+      "gallery": "गॅलरी",
+      "files": "फाईल्स",
+      "dragDrop": "किंवा इथे फोटो ड्रॅग करा",
+      "supported": "समर्थित: JPG, PNG, HEIC (≤10MB)",
+      "analyzing": "तुमचा फोटो तपासत आहे...",
+      "uploadAnother": "दुसरा स्कॅन करा",
+      "ready": "फोटो विश्लेषणासाठी तयार"
+    },
+    "soil": {
+      "pageTitle": "माती आरोग्य स्कॅनर",
+      "healthScore": "माती आरोग्य स्कोअर",
+      "soilProfile": "माती प्रोफाइल",
+      "minerals": "खनिज विश्लेषण",
+      "recommendations": "शिफारसी",
+      "bestCrops": "या मातीसाठी योग्य पिके",
+      "organicFertilizers": "सेंद्रिय खते",
+      "analyzing": "माती रचना तपासत आहे..."
+    },
+    "disease": {
+      "pageTitle": "पीक रोग शोधक",
+      "detected": "रोग आढळला",
+      "confidence": "खात्री",
+      "severity": "तीव्रता",
+      "symptoms": "आम्हाला काय आढळले",
+      "treatment": "त्वरित उपचार",
+      "organicSolutions": "सेंद्रिय उपाय",
+      "prevention": "प्रतिबंध टिप्स",
+      "seekHelp": "तज्ञांची मदत हवी आहे?",
+      "analyzing": "पीक रोग शोधत आहे..."
+    }
   }
 }

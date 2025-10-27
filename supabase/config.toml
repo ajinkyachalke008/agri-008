@@ -1,1 +1,7 @@
 project_id = "hhnwlezszfuztzhjrvog"
+
+[functions.analyze-soil]
+verify_jwt = false
+
+[functions.detect-disease]
+verify_jwt = false

@@ -67,5 +67,60 @@
     "close": "Close",
     "save": "Save",
     "cancel": "Cancel"
+  },
+  "scanners": {
+    "hub": {
+      "title": "Smart Scanners",
+      "subtitle": "AI-powered analysis for your farm",
+      "soil": {
+        "title": "Soil Health Scanner",
+        "description": "Analyze soil minerals and get organic recommendations",
+        "cta": "Scan Soil"
+      },
+      "disease": {
+        "title": "Disease Detector",
+        "description": "Detect plant diseases and get treatment plans",
+        "cta": "Scan Plant"
+      }
+    },
+    "benefits": {
+      "instant": "Instant results",
+      "organic": "Organic solutions",
+      "expert": "Expert AI",
+      "safe": "Safe treatments"
+    },
+    "upload": {
+      "title": "Upload or Capture Image",
+      "camera": "Camera",
+      "gallery": "Gallery",
+      "files": "Files",
+      "dragDrop": "Or drag and drop image here",
+      "supported": "Supported: JPG, PNG, HEIC (≤10MB)",
+      "analyzing": "Analyzing your image...",
+      "uploadAnother": "Scan Another",
+      "ready": "Image ready for analysis"
+    },
+    "soil": {
+      "pageTitle": "Soil Health Scanner",
+      "healthScore": "Soil Health Score",
+      "soilProfile": "Soil Profile",
+      "minerals": "Mineral Analysis",
+      "recommendations": "Recommendations",
+      "bestCrops": "Best Crops for This Soil",
+      "organicFertilizers": "Organic Fertilizers",
+      "analyzing": "Analyzing soil composition..."
+    },
+    "disease": {
+      "pageTitle": "Plant Disease Detector",
+      "detected": "Disease Detected",
+      "confidence": "Confidence",
+      "severity": "Severity",
+      "symptoms": "What We Found",
+      "treatment": "Immediate Treatment",
+      "organicSolutions": "Organic Solutions",
+      "prevention": "Prevention Tips",
+      "seekHelp": "Need Expert Help?",
+      "analyzing": "Detecting plant disease..."
+    }
   }
 }
