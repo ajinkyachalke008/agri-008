@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      crop_listings: {
+        Row: {
+          category: string
+          created_at: string
+          crop_name: string
+          delivery_available: boolean | null
+          district: string
+          farm_name: string
+          farmer_name: string
+          harvest_date: string
+          id: string
+          image_urls: string[] | null
+          is_organic: boolean | null
+          price_per_unit: number
+          quantity: number
+          state: string
+          status: string | null
+          storage_type: string | null
+          taluka: string | null
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          crop_name: string
+          delivery_available?: boolean | null
+          district: string
+          farm_name: string
+          farmer_name: string
+          harvest_date: string
+          id?: string
+          image_urls?: string[] | null
+          is_organic?: boolean | null
+          price_per_unit: number
+          quantity: number
+          state: string
+          status?: string | null
+          storage_type?: string | null
+          taluka?: string | null
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          crop_name?: string
+          delivery_available?: boolean | null
+          district?: string
+          farm_name?: string
+          farmer_name?: string
+          harvest_date?: string
+          id?: string
+          image_urls?: string[] | null
+          is_organic?: boolean | null
+          price_per_unit?: number
+          quantity?: number
+          state?: string
+          status?: string | null
+          storage_type?: string | null
+          taluka?: string | null
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

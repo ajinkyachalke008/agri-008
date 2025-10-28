@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.detect-disease]
 verify_jwt = false
+
+[functions.suggest-price]
+verify_jwt = false

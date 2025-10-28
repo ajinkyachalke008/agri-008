@@ -122,5 +122,21 @@
       "seekHelp": "Need Expert Help?",
       "analyzing": "Detecting plant disease..."
     }
+  },
+  "marketplace": {
+    "title": "Farm Marketplace",
+    "subtitle": "Connect directly with buyers and sellers in your region",
+    "buy": {
+      "title": "Buy Crops",
+      "description": "Browse fresh produce from local farmers",
+      "cta": "Browse Listings",
+      "pageTitle": "Available Crops"
+    },
+    "sell": {
+      "title": "Sell Crops",
+      "description": "List your produce and reach more buyers",
+      "cta": "List Your Crops",
+      "formTitle": "Sell Your Crops"
+    }
   }
 }
