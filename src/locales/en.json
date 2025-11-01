@@ -124,19 +124,158 @@
     }
   },
   "marketplace": {
-    "title": "Farm Marketplace",
-    "subtitle": "Connect directly with buyers and sellers in your region",
-    "buy": {
-      "title": "Buy Crops",
-      "description": "Browse fresh produce from local farmers",
-      "cta": "Browse Listings",
-      "pageTitle": "Available Crops"
+    "hub": {
+      "title": "Farm Marketplace",
+      "subtitle": "Connect directly with buyers and sellers",
+      "sell": "Sell Your Crops",
+      "buy": "Buy Quality Produce",
+      "stats": {
+        "listings": "Active Listings",
+        "farmers": "Verified Farmers",
+        "districts": "Districts Covered"
+      }
     },
     "sell": {
-      "title": "Sell Crops",
-      "description": "List your produce and reach more buyers",
-      "cta": "List Your Crops",
-      "formTitle": "Sell Your Crops"
+      "pageTitle": "Sell Your Crops",
+      "formTitle": "Create Listing",
+      "cropName": "Crop Name",
+      "category": "Category",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "pricePerUnit": "Price per Unit (₹)",
+      "isOrganic": "Organic Certified",
+      "harvestDate": "Harvest Date",
+      "deliveryAvailable": "Delivery Available",
+      "storageType": "Storage Type",
+      "location": "Location",
+      "state": "State",
+      "district": "District",
+      "taluka": "Taluka",
+      "farmName": "Farm Name",
+      "farmerName": "Your Name",
+      "images": "Upload Images",
+      "getSuggestion": "Get AI Price Suggestion",
+      "submit": "Create Listing",
+      "success": "Listing created successfully!",
+      "aiSuggestion": "AI suggests ₹{{price}} per {{unit}}"
+    },
+    "buy": {
+      "pageTitle": "Buy Fresh Produce",
+      "searchPlaceholder": "Search crops...",
+      "filters": "Filters",
+      "category": "Category",
+      "organic": "Organic Only",
+      "delivery": "Delivery Available",
+      "location": "Location",
+      "priceRange": "Price Range",
+      "sortBy": "Sort By",
+      "newest": "Newest First",
+      "priceLow": "Price: Low to High",
+      "priceHigh": "Price: High to Low",
+      "noListings": "No listings found",
+      "viewDetails": "View Details",
+      "organic_badge": "Organic",
+      "delivery_badge": "Delivery"
+    }
+  },
+  "schemes": {
+    "hub": {
+      "title": "Government Schemes",
+      "subtitle": "Discover subsidies, insurance, and support programs",
+      "browse": "Browse All Schemes",
+      "recommendations": "AI Recommendations",
+      "search": "Smart Search",
+      "stats": {
+        "total": "Total Schemes",
+        "active": "Active Subsidies",
+        "avgBenefit": "Avg. Benefit"
+      }
+    },
+    "dashboard": {
+      "pageTitle": "Government Scheme Dashboard",
+      "allSchemes": "All Schemes",
+      "categories": {
+        "insurance": "Crop Insurance",
+        "irrigation": "Irrigation & Water",
+        "machinery": "Machinery & Equipment",
+        "financial": "Financial Aid",
+        "soilHealth": "Soil Health",
+        "energy": "Renewable Energy",
+        "all": "All Categories"
+      },
+      "filters": {
+        "title": "Filter Schemes",
+        "beneficiary": "Beneficiary Type",
+        "amount": "Benefit Amount",
+        "deadline": "Deadline",
+        "state": "State",
+        "district": "District",
+        "schemeType": "Scheme Type",
+        "central": "Central Govt",
+        "state": "State Govt",
+        "district": "District Level"
+      },
+      "sort": {
+        "newest": "Newest First",
+        "highestBenefit": "Highest Benefit",
+        "endingSoon": "Ending Soon",
+        "mostRelevant": "Most Relevant"
+      },
+      "search": {
+        "placeholder": "Search schemes or describe your need...",
+        "searching": "Searching...",
+        "noResults": "No schemes found",
+        "tryDifferent": "Try different keywords"
+      }
+    },
+    "detail": {
+      "overview": "Overview",
+      "eligibility": "Eligibility Criteria",
+      "benefits": "Benefits",
+      "documents": "Required Documents",
+      "howToApply": "How to Apply",
+      "contact": "Contact Information",
+      "bookmark": "Bookmark",
+      "bookmarked": "Bookmarked",
+      "apply": "Apply Now",
+      "askAI": "Ask AI Assistant",
+      "similarSchemes": "Similar Schemes",
+      "amount": "Benefit Amount",
+      "deadline": "Application Deadline",
+      "ongoing": "Ongoing",
+      "phone": "Phone",
+      "email": "Email",
+      "central": "Central Govt",
+      "state": "State Govt"
+    },
+    "assistant": {
+      "greeting": "Hi! I can help you find suitable schemes. What do you need help with?",
+      "placeholder": "Ask about schemes...",
+      "examples": {
+        "1": "Show me crop insurance schemes",
+        "2": "I need subsidy for drip irrigation",
+        "3": "What schemes are available for women farmers?"
+      },
+      "typing": "AI is typing...",
+      "error": "Failed to get response. Please try again."
+    },
+    "card": {
+      "viewDetails": "View Details",
+      "eligible": "You may be eligible",
+      "endingSoon": "Ending Soon",
+      "central": "Central Govt",
+      "state": "State Govt",
+      "benefit": "Benefit Up To",
+      "upto": "Up to"
+    },
+    "recommendations": {
+      "title": "AI Recommendations for You",
+      "subtitle": "Based on your profile and farming needs",
+      "loading": "Generating recommendations...",
+      "error": "Failed to load recommendations",
+      "noRecommendations": "No recommendations available",
+      "why": "Why recommended:",
+      "match": "Match Score"
     }
   }
 }

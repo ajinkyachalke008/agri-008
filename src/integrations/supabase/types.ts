@@ -83,6 +83,172 @@ export type Database = {
         }
         Relationships: []
       }
+      government_schemes: {
+        Row: {
+          amount_max: number | null
+          amount_min: number | null
+          application_link: string | null
+          application_process: string
+          application_process_mr: string
+          benefits: Json
+          benefits_mr: Json
+          category: Database["public"]["Enums"]["scheme_category"]
+          contact_info: Json | null
+          created_at: string | null
+          description: string
+          description_mr: string
+          districts: Json | null
+          eligibility_criteria: Json
+          eligibility_criteria_mr: Json
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          required_documents: Json
+          required_documents_mr: Json
+          scheme_name: string
+          scheme_name_mr: string
+          scheme_type: Database["public"]["Enums"]["scheme_type"]
+          start_date: string | null
+          state: string
+          subcategory: string | null
+          tags: string[]
+          target_beneficiary: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          amount_max?: number | null
+          amount_min?: number | null
+          application_link?: string | null
+          application_process: string
+          application_process_mr: string
+          benefits: Json
+          benefits_mr: Json
+          category: Database["public"]["Enums"]["scheme_category"]
+          contact_info?: Json | null
+          created_at?: string | null
+          description: string
+          description_mr: string
+          districts?: Json | null
+          eligibility_criteria: Json
+          eligibility_criteria_mr: Json
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          required_documents: Json
+          required_documents_mr: Json
+          scheme_name: string
+          scheme_name_mr: string
+          scheme_type: Database["public"]["Enums"]["scheme_type"]
+          start_date?: string | null
+          state?: string
+          subcategory?: string | null
+          tags: string[]
+          target_beneficiary: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          amount_max?: number | null
+          amount_min?: number | null
+          application_link?: string | null
+          application_process?: string
+          application_process_mr?: string
+          benefits?: Json
+          benefits_mr?: Json
+          category?: Database["public"]["Enums"]["scheme_category"]
+          contact_info?: Json | null
+          created_at?: string | null
+          description?: string
+          description_mr?: string
+          districts?: Json | null
+          eligibility_criteria?: Json
+          eligibility_criteria_mr?: Json
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          required_documents?: Json
+          required_documents_mr?: Json
+          scheme_name?: string
+          scheme_name_mr?: string
+          scheme_type?: Database["public"]["Enums"]["scheme_type"]
+          start_date?: string | null
+          state?: string
+          subcategory?: string | null
+          tags?: string[]
+          target_beneficiary?: string[]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      scheme_recommendations: {
+        Row: {
+          created_at: string | null
+          id: string
+          reason: string
+          relevance_score: number
+          scheme_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          reason: string
+          relevance_score: number
+          scheme_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          reason?: string
+          relevance_score?: number
+          scheme_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheme_recommendations_scheme_id_fkey"
+            columns: ["scheme_id"]
+            isOneToOne: false
+            referencedRelation: "government_schemes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_scheme_interactions: {
+        Row: {
+          created_at: string | null
+          id: string
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          notes: string | null
+          scheme_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          interaction_type: Database["public"]["Enums"]["interaction_type"]
+          notes?: string | null
+          scheme_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          interaction_type?: Database["public"]["Enums"]["interaction_type"]
+          notes?: string | null
+          scheme_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_scheme_interactions_scheme_id_fkey"
+            columns: ["scheme_id"]
+            isOneToOne: false
+            referencedRelation: "government_schemes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -91,7 +257,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      interaction_type: "viewed" | "bookmarked" | "applied" | "inquired"
+      scheme_category:
+        | "crop_insurance"
+        | "irrigation"
+        | "machinery"
+        | "financial_aid"
+        | "soil_health"
+        | "renewable_energy"
+      scheme_type: "central" | "state" | "district"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -218,6 +392,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      interaction_type: ["viewed", "bookmarked", "applied", "inquired"],
+      scheme_category: [
+        "crop_insurance",
+        "irrigation",
+        "machinery",
+        "financial_aid",
+        "soil_health",
+        "renewable_energy",
+      ],
+      scheme_type: ["central", "state", "district"],
+    },
   },
 } as const

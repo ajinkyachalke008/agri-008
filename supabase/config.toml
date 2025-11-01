@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.suggest-price]
 verify_jwt = false
+
+[functions.recommend-schemes]
+verify_jwt = false
+
+[functions.search-schemes]
+verify_jwt = false
+
+[functions.explain-scheme]
+verify_jwt = false

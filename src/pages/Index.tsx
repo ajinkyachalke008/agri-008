@@ -3,6 +3,7 @@ import Problem from "@/components/Problem";
 import Solution from "@/components/Solution";
 import ScannerHub from "@/components/ScannerHub";
 import { MarketplaceHub } from "@/components/marketplace/MarketplaceHub";
+import SchemesHub from "@/components/schemes/SchemesHub";
 import Features from "@/components/Features";
 import Impact from "@/components/Impact";
 import InteractiveLearning from "@/components/InteractiveLearning";
@@ -14,6 +15,7 @@ const Index = () => {
       <Hero />
       <ScannerHub />
       <MarketplaceHub />
+      <SchemesHub />
       <Problem />
       <Solution />
       <Features />

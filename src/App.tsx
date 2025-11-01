@@ -10,6 +10,7 @@ import SoilScanner from "./pages/SoilScanner";
 import DiseaseScanner from "./pages/DiseaseScanner";
 import SellCrops from "./pages/SellCrops";
 import BuyCrops from "./pages/BuyCrops";
+import SchemesDashboard from "./pages/SchemesDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
             <Route path="/scan/disease" element={<DiseaseScanner />} />
             <Route path="/marketplace/sell" element={<SellCrops />} />
             <Route path="/marketplace/buy" element={<BuyCrops />} />
+            <Route path="/schemes" element={<SchemesDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
