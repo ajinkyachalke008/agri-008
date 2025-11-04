@@ -33,13 +33,19 @@ const ContactCTA = () => {
   };
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-primary/5 to-secondary/5">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 px-6 bg-gradient-to-br from-primary/5 to-secondary/5 relative overflow-hidden">
+      {/* Cyber Grid */}
+      <div className="absolute inset-0 opacity-5" style={{
+        backgroundImage: 'linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)',
+        backgroundSize: '60px 60px'
+      }}></div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 fade-in">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
-            Ready to Transform{" "}
-            <span className="text-primary bg-gradient-to-r from-farm-green to-sky-blue bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+            <span className="font-cyber">Ready to Transform</span>{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Your Farm?
             </span>
           </h2>
@@ -51,9 +57,9 @@ const ContactCTA = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
           {/* Contact Form */}
-          <div className="glass-hero">
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6">
-              Start Your Free Pilot Program
+          <div className="cyber-card border-2 border-primary/30">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4 sm:mb-6 font-cyber">
+              <span className="neon-text">Start Your Free Pilot Program</span>
             </h3>
             <p className="text-muted-foreground mb-8">
               Get personalized recommendations for your farm and see the impact of smart agriculture firsthand.

@@ -56,13 +56,21 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 px-6 relative">
+      {/* Cyber Background Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-primary/40 animate-particleFloat" style={{ animationDelay: '0s' }}></div>
+        <div className="absolute top-1/2 right-1/3 w-2 h-2 rounded-full bg-secondary/40 animate-particleFloat" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/2 w-2 h-2 rounded-full bg-accent/40 animate-particleFloat" style={{ animationDelay: '4s' }}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 fade-in">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
-            Powerful Features for{" "}
-            <span className="text-primary bg-gradient-to-r from-farm-green to-sky-blue bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+            <span className="font-cyber neon-text">Powerful Features</span>
+            {" "}for{" "}
+            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
               Modern Farming
             </span>
           </h2>
@@ -71,46 +79,52 @@ const Features = () => {
           </p>
         </div>
 
-        {/* Features Grid */}
+        {/* Features Grid - 3D Cyber Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {features.map((feature, index) => {
             const IconComponent = feature.icon;
             return (
               <div
                 key={feature.id}
-                className="glass-feature group cursor-pointer"
+                className="cyber-card group cursor-pointer relative"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
+                {/* Scan Line Effect */}
+                <div className="scan-line opacity-0 group-hover:opacity-100"></div>
+
                 {/* Feature Image */}
                 {feature.image && (
                   <div className="relative h-48 mb-6 rounded-xl overflow-hidden">
                     <img
                       src={feature.image}
                       alt={feature.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent"></div>
+                    
+                    {/* Holographic Overlay */}
+                    <div className="absolute inset-0 holo-effect opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
                   </div>
                 )}
 
                 {/* Feature Content */}
                 <div className="space-y-4">
                   <div className="flex items-center space-x-4">
-                    <div className={`p-3 rounded-xl bg-${feature.color}/10 glow-${feature.color === 'farm-green' ? 'green' : feature.color === 'sky-blue' ? 'blue' : 'yellow'} group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`p-3 rounded-xl bg-${feature.color}/10 border border-${feature.color}/30 group-hover:scale-110 group-hover:animate-pulseGlow transition-all duration-300`}>
                       <IconComponent className={`w-6 h-6 text-${feature.color}`} />
                     </div>
-                    <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
+                    <h3 className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors font-cyber">
                       {feature.title}
                     </h3>
                   </div>
                   
-                  <p className="text-muted-foreground leading-relaxed">
+                  <p className="text-muted-foreground leading-relaxed text-sm">
                     {feature.description}
                   </p>
                 </div>
 
-                {/* Hover Effect Overlay */}
-                <div className="absolute inset-0 rounded-glass border-2 border-transparent group-hover:border-primary/30 transition-all duration-300 pointer-events-none"></div>
+                {/* Neon Border on Hover */}
+                <div className="absolute inset-0 rounded-glass border-2 border-transparent group-hover:border-primary/50 group-hover:animate-neonBorder transition-all duration-300 pointer-events-none"></div>
               </div>
             );
           })}

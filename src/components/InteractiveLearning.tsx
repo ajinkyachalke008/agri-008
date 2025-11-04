@@ -136,13 +136,13 @@ const InteractiveLearning = () => {
   ];
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-background via-muted/10 to-background">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-20 px-6 bg-gradient-to-br from-background via-muted/10 to-background relative">
+      <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16 fade-in">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 sm:mb-6">
-            Learn & Grow{" "}
-            <span className="text-primary bg-gradient-to-r from-farm-green to-sky-blue bg-clip-text text-transparent">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+            <span className="font-cyber neon-text">Learn & Grow</span>{" "}
+            <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               Together
             </span>
           </h2>
@@ -156,7 +156,7 @@ const InteractiveLearning = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           {/* Video Tutorials Card */}
           <Collapsible open={expandedCard === "videos"} onOpenChange={() => toggleCard("videos")}>
-            <Card className="glass-feature h-fit group hover:shadow-lg transition-all duration-300">
+            <Card className="cyber-card h-fit group border-2 border-primary/20 hover:border-primary/40">
               <CardHeader className="text-center">
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 glow-green group-hover:scale-110 transition-transform duration-300">
                   <PlayCircle className="w-8 h-8 text-primary" />

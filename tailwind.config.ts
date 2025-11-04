@@ -92,20 +92,12 @@ export default {
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
         },
         "floating": {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -119,6 +111,59 @@ export default {
           "0%, 100%": { boxShadow: "0 0 20px hsl(var(--primary) / 0.5)" },
           "50%": { boxShadow: "0 0 40px hsl(var(--primary) / 0.8)" },
         },
+        "spin": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+        "shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        "pulseGlow": {
+          "0%, 100%": {
+            boxShadow: "0 0 20px hsl(var(--primary) / 0.4), 0 0 40px hsl(var(--primary) / 0.2)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px hsl(var(--primary) / 0.8), 0 0 80px hsl(var(--primary) / 0.4)",
+          },
+        },
+        "scanLine": {
+          "0%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(100%)" },
+        },
+        "holoShimmer": {
+          "0%": { backgroundPosition: "0% 50%" },
+          "50%": { backgroundPosition: "100% 50%" },
+          "100%": { backgroundPosition: "0% 50%" },
+        },
+        "neonBorder": {
+          "0%, 100%": {
+            borderColor: "hsl(var(--primary) / 0.5)",
+            boxShadow: "inset 0 0 20px hsl(var(--primary) / 0.2)",
+          },
+          "50%": {
+            borderColor: "hsl(var(--secondary) / 0.8)",
+            boxShadow: "inset 0 0 40px hsl(var(--secondary) / 0.4)",
+          },
+        },
+        "particleFloat": {
+          "0%, 100%": {
+            transform: "translate(0, 0) rotate(0deg)",
+            opacity: "0.3",
+          },
+          "25%": {
+            transform: "translate(20px, -30px) rotate(90deg)",
+            opacity: "0.7",
+          },
+          "50%": {
+            transform: "translate(-15px, -60px) rotate(180deg)",
+            opacity: "1",
+          },
+          "75%": {
+            transform: "translate(30px, -40px) rotate(270deg)",
+            opacity: "0.5",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -126,6 +171,13 @@ export default {
         "floating": "floating 6s ease-in-out infinite",
         "fade-in": "fade-in 1s ease-out",
         "glow": "glow 2s ease-in-out infinite",
+        "spin": "spin 4s linear infinite",
+        "shimmer": "shimmer 1.5s ease-in-out",
+        "pulseGlow": "pulseGlow 2s ease-in-out infinite",
+        "scanLine": "scanLine 3s infinite",
+        "holoShimmer": "holoShimmer 3s ease infinite",
+        "neonBorder": "neonBorder 3s infinite",
+        "particleFloat": "particleFloat 15s infinite ease-in-out",
       },
     },
   },
