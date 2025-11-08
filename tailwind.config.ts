@@ -24,23 +24,6 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         
-        // Farm Color System
-        'farm-green': {
-          DEFAULT: "hsl(var(--farm-green))",
-          light: "hsl(var(--farm-green-light))",
-          dark: "hsl(var(--farm-green-dark))",
-        },
-        'sky-blue': {
-          DEFAULT: "hsl(var(--sky-blue))",
-          light: "hsl(var(--sky-blue-light))",
-          dark: "hsl(var(--sky-blue-dark))",
-        },
-        'warm-yellow': {
-          DEFAULT: "hsl(var(--warm-yellow))",
-          light: "hsl(var(--warm-yellow-light))",
-          dark: "hsl(var(--warm-yellow-dark))",
-        },
-        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -79,6 +62,17 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        earth: {
+          green: "hsl(var(--earth-green))",
+          orange: "hsl(var(--earth-orange))",
+          brown: "hsl(var(--earth-brown))",
+        },
+        sky: {
+          blue: "hsl(var(--sky-blue))",
+        },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
       },
       borderRadius: {
         lg: "var(--radius)",

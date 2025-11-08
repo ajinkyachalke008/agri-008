@@ -1,117 +1,116 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Smart Farm Advisory System - Cyber-Modern Agri Design System
+/* Smart Farm Advisory System - Farmer-Friendly Design System
 All colors MUST be HSL for perfect theme consistency.
+Warm, readable, and accessible for farmers.
 */
 
 @layer base {
   :root {
-    /* Cyber-Modern Background System */
-    --background: 120 15% 12%;
-    --background-gradient: radial-gradient(circle at 20% 50%, hsl(142 76% 36% / 0.15), transparent 50%),
-                          radial-gradient(circle at 80% 20%, hsl(195 100% 50% / 0.1), transparent 50%),
-                          linear-gradient(135deg, hsl(120 15% 8%), hsl(120 15% 14%));
-    --foreground: 120 10% 95%;
-
-    /* Glassmorphism Card System - Enhanced */
-    --card: 120 15% 20% / 0.4;
-    --card-foreground: 120 10% 95%;
-    --glass: 120 15% 25% / 0.05;
-    --glass-border: 142 255 255 / 0.2;
-    --glass-shadow: 0 8px 32px hsl(142 76% 36% / 0.2);
-    --glass-glow: 0 0 40px hsl(142 76% 36% / 0.3), 0 0 80px hsl(142 76% 36% / 0.1);
-
-    /* Cyber Neon Accent Colors */
-    --cyber-green: 142 76% 45%;
-    --cyber-green-glow: 0 0 30px hsl(142 76% 45% / 0.6), 0 0 60px hsl(142 76% 45% / 0.3);
+    /* Warm Farmer-Friendly Background System */
+    --background: 40 30% 97%;
+    --foreground: 120 25% 15%;
     
-    --cyber-blue: 195 100% 50%;
-    --cyber-blue-glow: 0 0 30px hsl(195 100% 50% / 0.6), 0 0 60px hsl(195 100% 50% / 0.3);
+    /* Primary - Warm Forest Green */
+    --primary: 142 55% 35%;
+    --primary-foreground: 0 0% 100%;
     
-    --cyber-purple: 270 70% 60%;
-    --cyber-purple-glow: 0 0 30px hsl(270 70% 60% / 0.6), 0 0 60px hsl(270 70% 60% / 0.3);
+    /* Secondary - Soft Earth */
+    --secondary: 35 25% 85%;
+    --secondary-foreground: 120 20% 20%;
     
-    --cyber-orange: 25 95% 53%;
-    --cyber-orange-glow: 0 0 30px hsl(25 95% 53% / 0.6), 0 0 60px hsl(25 95% 53% / 0.3);
-
-    /* Farm Green Palette - Maintained for compatibility */
-    --farm-green: 142 76% 45%;
-    --farm-green-light: 142 76% 60%;
-    --farm-green-dark: 142 76% 35%;
-    --farm-green-glow: var(--cyber-green-glow);
-
-    /* Sky Blue Palette */
-    --sky-blue: 195 100% 50%;
-    --sky-blue-light: 195 100% 65%;
-    --sky-blue-dark: 195 100% 40%;
-    --sky-blue-glow: var(--cyber-blue-glow);
-
-    /* Warm Yellow Palette */
-    --warm-yellow: 45 100% 51%;
-    --warm-yellow-light: 45 100% 67%;
-    --warm-yellow-dark: 45 100% 37%;
-    --warm-yellow-glow: 0 0 30px hsl(45 100% 51% / 0.4);
-
-    /* Semantic Design Tokens */
-    --primary: 142 76% 45%;
-    --primary-foreground: 120 15% 12%;
-    --primary-glow: var(--cyber-green-glow);
-
-    --secondary: 195 100% 50%;
-    --secondary-foreground: 120 15% 12%;
-    --secondary-glow: var(--cyber-blue-glow);
-
-    --accent: 270 70% 60%;
-    --accent-foreground: 120 10% 95%;
-    --accent-glow: var(--cyber-purple-glow);
-
-    --muted: 120 10% 25%;
-    --muted-foreground: 120 10% 70%;
-
-    /* Interactive States - Enhanced */
-    --hover-glass: 120 15% 30% / 0.3;
-    --active-glass: 120 15% 35% / 0.4;
-
-    /* Glass Effects - Cyber Enhanced */
-    --backdrop-blur: blur(20px);
-    --backdrop-blur-light: blur(10px);
-    --border-radius-glass: 1.5rem;
-    --neon-border: 2px solid transparent;
+    /* Accent - Earthy Orange */
+    --accent: 30 85% 50%;
+    --accent-foreground: 0 0% 100%;
     
-    /* Animations - Extended */
-    --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    --transition-cyber: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-    --floating-animation: floating 6s ease-in-out infinite;
-
-    --border: 120 15% 25%;
-    --input: 120 15% 20% / 0.4;
-    --ring: 142 76% 45%;
-    --radius: 1rem;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    /* Muted - Light Beige */
+    --muted: 40 20% 90%;
+    --muted-foreground: 120 10% 40%;
     
-    --popover: 120 15% 15%;
-    --popover-foreground: 120 10% 95%;
-
-    --sidebar-background: 120 15% 10%;
-    --sidebar-foreground: 120 10% 90%;
-    --sidebar-primary: 142 76% 45%;
-    --sidebar-primary-foreground: 120 15% 12%;
-    --sidebar-accent: 120 15% 20%;
-    --sidebar-accent-foreground: 120 10% 90%;
-    --sidebar-border: 120 15% 20%;
-    --sidebar-ring: 142 76% 45%;
+    /* Destructive - Warm Red */
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    
+    /* Border & Input */
+    --border: 120 15% 75%;
+    --input: 120 15% 75%;
+    --ring: 142 55% 35%;
+    
+    /* Card */
+    --card: 0 0% 100%;
+    --card-foreground: 120 25% 15%;
+    
+    /* Popover */
+    --popover: 0 0% 100%;
+    --popover-foreground: 120 25% 15%;
+    
+    /* Farmer-friendly colors */
+    --earth-green: 142 55% 35%;
+    --earth-orange: 30 85% 50%;
+    --earth-brown: 25 40% 40%;
+    --sky-blue: 200 60% 45%;
+    
+    /* Success, Warning, Info */
+    --success: 142 60% 40%;
+    --warning: 45 90% 50%;
+    --info: 200 60% 45%;
+    
+    /* Radius */
+    --radius: 0.75rem;
+    --border-radius-glass: 1rem;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 120 25% 20%;
+    --sidebar-primary: 142 55% 35%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 40 20% 90%;
+    --sidebar-accent-foreground: 120 25% 20%;
+    --sidebar-border: 120 15% 85%;
+    --sidebar-ring: 142 55% 35%;
   }
 
   .dark {
-    /* Already dark by default - enhance further if needed */
-    --background: 120 15% 8%;
-    --foreground: 120 10% 98%;
+    --background: 120 20% 8%;
+    --foreground: 40 20% 95%;
+    
+    --primary: 142 60% 45%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 120 15% 18%;
+    --secondary-foreground: 40 15% 90%;
+    
+    --accent: 30 75% 55%;
+    --accent-foreground: 0 0% 100%;
+    
+    --muted: 120 10% 25%;
+    --muted-foreground: 40 10% 70%;
+    
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 120 15% 30%;
+    --input: 120 15% 30%;
+    --ring: 142 60% 45%;
+    
+    --card: 120 18% 12%;
+    --card-foreground: 40 20% 95%;
+    
+    --popover: 120 18% 12%;
+    --popover-foreground: 40 20% 95%;
+    
+    --sidebar-background: 120 18% 10%;
+    --sidebar-foreground: 40 15% 90%;
+    --sidebar-primary: 142 60% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 120 15% 20%;
+    --sidebar-accent-foreground: 40 15% 90%;
+    --sidebar-border: 120 15% 25%;
+    --sidebar-ring: 142 60% 45%;
   }
 }
 
@@ -122,10 +121,13 @@ All colors MUST be HSL for perfect theme consistency.
 
   body {
     @apply bg-background text-foreground font-['Poppins'];
-    background: var(--background-gradient);
+    background: linear-gradient(135deg, #f5f3ed, #e8f5e9, #f1f8f4);
+    background-attachment: fixed;
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
+    font-size: 16px;
+    font-weight: 500;
   }
   
   body::before {
@@ -133,87 +135,89 @@ All colors MUST be HSL for perfect theme consistency.
     position: fixed;
     inset: 0;
     background: 
-      radial-gradient(circle at 10% 20%, hsl(142 76% 36% / 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 90% 80%, hsl(195 100% 50% / 0.03) 0%, transparent 50%);
+      radial-gradient(circle at 20% 50%, rgba(76, 175, 80, 0.08), transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 152, 0, 0.06), transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
 
-  /* Cyber-Modern Glassmorphism Base Styles */
+  .dark body {
+    background: linear-gradient(135deg, #0d1410, #1a3a2e, #152820);
+  }
+
+  /* Farmer-Friendly Glassmorphism Base Styles */
   .glass {
-    background: hsl(var(--glass));
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    border: 1px solid hsl(var(--glass-border));
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(76, 175, 80, 0.2);
     border-radius: var(--border-radius-glass);
-    box-shadow: var(--glass-shadow);
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
     position: relative;
   }
 
+  .dark .glass {
+    background: rgba(26, 58, 46, 0.8);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+  }
+
   .glass-hover {
-    transition: var(--transition-smooth);
+    transition: all 0.3s ease;
   }
 
   .glass-hover:hover {
-    background: hsl(var(--hover-glass));
-    box-shadow: var(--glass-glow);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
     transform: translateY(-4px);
-    border-color: hsl(var(--primary) / 0.4);
+    border-color: rgba(76, 175, 80, 0.35);
+  }
+
+  .dark .glass-hover:hover {
+    background: rgba(26, 58, 46, 0.9);
+    border-color: rgba(76, 175, 80, 0.45);
   }
 
   .glass-card {
     @apply glass glass-hover;
   }
   
-  /* Cyber Card with Glow Effect */
+  /* Farmer-friendly card effects */
   .cyber-card {
-    @apply glass;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 248, 0.98));
+    border: 2px solid rgba(76, 175, 80, 0.25);
+    border-radius: 16px;
     position: relative;
     overflow: hidden;
-    transition: var(--transition-cyber);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
-  
-  .cyber-card::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: conic-gradient(
-      from 0deg,
-      transparent,
-      hsl(var(--primary) / 0.3),
-      transparent 30%
-    );
-    animation: spin 4s linear infinite;
-    opacity: 0;
-    transition: opacity 0.5s;
+
+  .dark .cyber-card {
+    background: linear-gradient(135deg, rgba(26, 58, 46, 0.9), rgba(21, 48, 38, 0.95));
+    border-color: rgba(76, 175, 80, 0.4);
   }
-  
-  .cyber-card:hover::before {
-    opacity: 1;
-  }
-  
+
   .cyber-card:hover {
-    transform: translateY(-8px) scale(1.02);
+    transform: translateY(-4px);
+    border-color: rgba(76, 175, 80, 0.5);
     box-shadow: 
-      var(--glass-glow),
-      0 20px 60px hsl(var(--primary) / 0.3);
+      0 8px 24px rgba(76, 175, 80, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .cyber-card:hover {
+    border-color: rgba(76, 175, 80, 0.6);
+    box-shadow: 
+      0 8px 24px rgba(76, 175, 80, 0.2),
+      0 4px 8px rgba(0, 0, 0, 0.2);
   }
 }
 
 @layer components {
-  /* Cyber Glassmorphism Component Variants */
+  /* Farmer-Friendly Component Variants */
   .glass-hero {
-    background: hsl(var(--glass));
-    backdrop-filter: var(--backdrop-blur);
-    -webkit-backdrop-filter: var(--backdrop-blur);
-    border: 1px solid hsl(var(--glass-border));
-    border-radius: var(--border-radius-glass);
-    box-shadow: var(--glass-shadow);
+    @apply glass;
     padding: 1.5rem;
-    position: relative;
   }
 
   @media (min-width: 640px) {
@@ -231,7 +235,7 @@ All colors MUST be HSL for perfect theme consistency.
   .glass-feature {
     @apply glass;
     padding: 1.25rem;
-    transition: var(--transition-smooth);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
   }
@@ -249,41 +253,26 @@ All colors MUST be HSL for perfect theme consistency.
   }
 
   .glass-feature:hover {
-    background: hsl(var(--hover-glass));
-    box-shadow: var(--glass-glow);
-    transform: translateY(-4px) scale(1.02);
-    border-color: hsl(var(--primary) / 0.4);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px);
+    border-color: rgba(76, 175, 80, 0.35);
   }
 
-  .glass-feature::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      45deg,
-      transparent 30%,
-      hsl(var(--primary) / 0.1) 50%,
-      transparent 70%
-    );
-    opacity: 0;
-    transition: opacity 0.5s;
-    pointer-events: none;
-  }
-
-  .glass-feature:hover::after {
-    opacity: 1;
-    animation: shimmer 1.5s ease-in-out;
+  .dark .glass-feature:hover {
+    background: rgba(26, 58, 46, 0.9);
+    border-color: rgba(76, 175, 80, 0.45);
   }
 
   @media (min-width: 1024px) {
     .glass-feature:hover {
-      transform: translateY(-6px) scale(1.03);
+      transform: translateY(-6px);
     }
   }
 
   /* Floating Animation */
   .floating {
-    animation: var(--floating-animation);
+    animation: floating 6s ease-in-out infinite;
   }
 
   @keyframes floating {
@@ -301,30 +290,15 @@ All colors MUST be HSL for perfect theme consistency.
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* Cyber Animations */
+  /* Simple Animations */
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
 
   @keyframes shimmer {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% {
-      box-shadow: 0 0 20px hsl(var(--primary) / 0.4),
-                  0 0 40px hsl(var(--primary) / 0.2);
-    }
-    50% {
-      box-shadow: 0 0 40px hsl(var(--primary) / 0.8),
-                  0 0 80px hsl(var(--primary) / 0.4);
-    }
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
   }
 
   @keyframes scanLine {
@@ -332,45 +306,7 @@ All colors MUST be HSL for perfect theme consistency.
     100% { transform: translateY(100%); }
   }
 
-  @keyframes holoShimmer {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-
-  @keyframes neonBorder {
-    0%, 100% {
-      border-color: hsl(var(--primary) / 0.5);
-      box-shadow: inset 0 0 20px hsl(var(--primary) / 0.2);
-    }
-    50% {
-      border-color: hsl(var(--secondary) / 0.8);
-      box-shadow: inset 0 0 40px hsl(var(--secondary) / 0.4);
-    }
-  }
-
-  /* Neon Text Effect */
-  .neon-text {
-    color: hsl(var(--primary));
-    text-shadow: 
-      0 0 10px hsl(var(--primary) / 0.8),
-      0 0 20px hsl(var(--primary) / 0.6),
-      0 0 30px hsl(var(--primary) / 0.4);
-  }
-
-  /* Holographic Effect */
-  .holo-effect {
-    background: linear-gradient(
-      135deg,
-      hsl(var(--primary) / 0.1),
-      hsl(var(--secondary) / 0.1),
-      hsl(var(--accent) / 0.1)
-    );
-    background-size: 200% 200%;
-    animation: holoShimmer 3s ease infinite;
-  }
-
-  /* Scan Line Effect */
+  /* Scan Line Effect - Subtle */
   .scan-line {
     position: absolute;
     top: 0;
@@ -380,7 +316,7 @@ All colors MUST be HSL for perfect theme consistency.
     background: linear-gradient(
       90deg,
       transparent,
-      hsl(var(--primary) / 0.8),
+      rgba(76, 175, 80, 0.4),
       transparent
     );
     animation: scanLine 3s infinite;
@@ -395,14 +331,76 @@ All colors MUST be HSL for perfect theme consistency.
     pointer-events: none;
   }
 
+  /* Readable text styles */
+  .neon-text {
+    color: hsl(var(--earth-green));
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    font-weight: 700;
+  }
+
+  .dark .neon-text {
+    color: hsl(var(--primary));
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Warm gradient backgrounds */
+  .holo-effect {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(232, 245, 233, 0.98)
+    );
+    transition: background 0.3s ease;
+  }
+
+  .dark .holo-effect {
+    background: linear-gradient(
+      135deg,
+      rgba(26, 58, 46, 0.9),
+      rgba(21, 48, 38, 0.95)
+    );
+  }
+
+  /* Farmer-friendly typography */
+  .font-display {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: normal;
+  }
+
+  .text-readable {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: hsl(var(--foreground));
+  }
+
+  .heading-warm {
+    color: hsl(var(--earth-green));
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark .heading-warm {
+    color: hsl(var(--primary));
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
   /* Mobile-friendly glassmorphism fallbacks */
-  @supports not (backdrop-filter: blur(20px)) {
+  @supports not (backdrop-filter: blur(12px)) {
     .glass,
     .glass-hero,
     .glass-feature,
     .glass-card {
-      background: hsl(var(--background) / 0.95);
-      border: 1px solid hsl(var(--border));
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(76, 175, 80, 0.25);
+    }
+
+    .dark .glass,
+    .dark .glass-hero,
+    .dark .glass-feature,
+    .dark .glass-card {
+      background: rgba(26, 58, 46, 0.9);
+      border: 1px solid rgba(76, 175, 80, 0.35);
     }
   }
 
@@ -431,20 +429,8 @@ All colors MUST be HSL for perfect theme consistency.
     }
 
     .cyber-card:hover {
-      transform: translateY(-4px) scale(1.01);
+      transform: translateY(-2px);
     }
-  }
-
-  .glow-green {
-    box-shadow: var(--farm-green-glow);
-  }
-
-  .glow-blue {
-    box-shadow: var(--sky-blue-glow);
-  }
-
-  .glow-yellow {
-    box-shadow: var(--warm-yellow-glow);
   }
 
   /* Liquid Glass Cards */
@@ -452,89 +438,13 @@ All colors MUST be HSL for perfect theme consistency.
     @apply glass-feature;
     position: relative;
     overflow: hidden;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .liquid-glass-card::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, 
-      hsl(var(--primary) / 0.3), 
-      hsl(var(--sky-blue) / 0.3), 
-      hsl(var(--accent) / 0.3),
-      hsl(var(--primary) / 0.3)
-    );
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    background-size: 200% 200%;
-    animation: gradient-shift 3s ease infinite;
-  }
-
-  .liquid-glass-card:hover::before {
-    opacity: 1;
+    transition: all 0.4s ease;
   }
 
   .liquid-glass-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    background: hsl(var(--hover-glass));
+    transform: translateY(-6px);
     box-shadow: 
-      var(--glass-glow),
-      0 20px 40px hsl(var(--primary) / 0.1);
-  }
-
-  @keyframes gradient-shift {
-    0%, 100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* Liquid glass streak animation */
-  .liquid-glass-card:hover::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      45deg,
-      transparent,
-      hsl(var(--primary) / 0.1),
-      transparent
-    );
-    transform: rotate(45deg) translateX(-100%);
-    animation: liquid-streak 0.6s ease-out;
-  }
-
-  @keyframes liquid-streak {
-    0% {
-      transform: rotate(45deg) translateX(-100%);
-    }
-    100% {
-      transform: rotate(45deg) translateX(100%);
-    }
-  }
-
-  /* Mobile optimizations */
-  @media (max-width: 768px) {
-    .liquid-glass-card:hover {
-      transform: translateY(-4px) scale(1.01);
-    }
-  }
-
-  /* Cyber Font Display */
-  .font-cyber {
-    font-family: 'Orbitron', sans-serif;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+      0 12px 32px rgba(76, 175, 80, 0.15),
+      0 6px 12px rgba(0, 0, 0, 0.1);
   }
 }
