@@ -214,6 +214,84 @@ export type Database = {
           },
         ]
       }
+      user_profiles: {
+        Row: {
+          alert_types: string[] | null
+          created_at: string | null
+          district: string
+          email: string | null
+          email_notifications: boolean | null
+          farm_size: number | null
+          farm_size_unit: string | null
+          full_name: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          phone: string
+          pincode: string | null
+          preferred_language: string | null
+          primary_crops: string[] | null
+          sms_notifications: boolean | null
+          state: string
+          taluka: string | null
+          updated_at: string | null
+          user_id: string
+          village: string | null
+          weather_alerts_enabled: boolean | null
+          whatsapp_notifications: boolean | null
+        }
+        Insert: {
+          alert_types?: string[] | null
+          created_at?: string | null
+          district: string
+          email?: string | null
+          email_notifications?: boolean | null
+          farm_size?: number | null
+          farm_size_unit?: string | null
+          full_name: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          phone: string
+          pincode?: string | null
+          preferred_language?: string | null
+          primary_crops?: string[] | null
+          sms_notifications?: boolean | null
+          state?: string
+          taluka?: string | null
+          updated_at?: string | null
+          user_id: string
+          village?: string | null
+          weather_alerts_enabled?: boolean | null
+          whatsapp_notifications?: boolean | null
+        }
+        Update: {
+          alert_types?: string[] | null
+          created_at?: string | null
+          district?: string
+          email?: string | null
+          email_notifications?: boolean | null
+          farm_size?: number | null
+          farm_size_unit?: string | null
+          full_name?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          phone?: string
+          pincode?: string | null
+          preferred_language?: string | null
+          primary_crops?: string[] | null
+          sms_notifications?: boolean | null
+          state?: string
+          taluka?: string | null
+          updated_at?: string | null
+          user_id?: string
+          village?: string | null
+          weather_alerts_enabled?: boolean | null
+          whatsapp_notifications?: boolean | null
+        }
+        Relationships: []
+      }
       user_scheme_interactions: {
         Row: {
           created_at: string | null
@@ -248,6 +326,111 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      weather_alerts: {
+        Row: {
+          alert_type: string
+          created_at: string | null
+          crop_specific_advice: Json | null
+          email_sent: boolean | null
+          forecast_date: string
+          humidity: number | null
+          id: string
+          message: string
+          message_mr: string | null
+          rainfall_mm: number | null
+          read_at: string | null
+          recommendations: Json | null
+          sent_at: string | null
+          severity: string
+          sms_sent: boolean | null
+          temperature: number | null
+          title: string
+          title_mr: string | null
+          user_id: string | null
+          weather_data: Json | null
+          whatsapp_sent: boolean | null
+          wind_speed: number | null
+        }
+        Insert: {
+          alert_type: string
+          created_at?: string | null
+          crop_specific_advice?: Json | null
+          email_sent?: boolean | null
+          forecast_date: string
+          humidity?: number | null
+          id?: string
+          message: string
+          message_mr?: string | null
+          rainfall_mm?: number | null
+          read_at?: string | null
+          recommendations?: Json | null
+          sent_at?: string | null
+          severity: string
+          sms_sent?: boolean | null
+          temperature?: number | null
+          title: string
+          title_mr?: string | null
+          user_id?: string | null
+          weather_data?: Json | null
+          whatsapp_sent?: boolean | null
+          wind_speed?: number | null
+        }
+        Update: {
+          alert_type?: string
+          created_at?: string | null
+          crop_specific_advice?: Json | null
+          email_sent?: boolean | null
+          forecast_date?: string
+          humidity?: number | null
+          id?: string
+          message?: string
+          message_mr?: string | null
+          rainfall_mm?: number | null
+          read_at?: string | null
+          recommendations?: Json | null
+          sent_at?: string | null
+          severity?: string
+          sms_sent?: boolean | null
+          temperature?: number | null
+          title?: string
+          title_mr?: string | null
+          user_id?: string | null
+          weather_data?: Json | null
+          whatsapp_sent?: boolean | null
+          wind_speed?: number | null
+        }
+        Relationships: []
+      }
+      weather_notification_preferences: {
+        Row: {
+          alert_type: string
+          enabled: boolean | null
+          id: string
+          min_severity: string | null
+          time_window_end: string | null
+          time_window_start: string | null
+          user_id: string | null
+        }
+        Insert: {
+          alert_type: string
+          enabled?: boolean | null
+          id?: string
+          min_severity?: string | null
+          time_window_end?: string | null
+          time_window_start?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          alert_type?: string
+          enabled?: boolean | null
+          id?: string
+          min_severity?: string | null
+          time_window_end?: string | null
+          time_window_start?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
