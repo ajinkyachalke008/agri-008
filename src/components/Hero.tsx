@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Smartphone, PlayCircle, MapPin, Wifi, Mic } from "lucide-react";
+import { Smartphone, PlayCircle, MapPin, Wifi, Mic, Cloud } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import heroImage from "@/assets/hero-farming.jpg";
@@ -105,30 +105,18 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link to="/signup" className="w-full sm:w-auto">
+              <Link to="/auth" className="w-full sm:w-auto">
                 <Button variant="hero" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
+                  <Cloud className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                  Weather Alerts
+                </Button>
+              </Link>
+              <Link to="/signup" className="w-full sm:w-auto">
+                <Button variant="glass" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
                   <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   {t('hero.cta.primary')}
                 </Button>
               </Link>
-              <Button 
-                variant="glass" 
-                size="lg" 
-                className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
-                onClick={handleLocationPermission}
-              >
-                {locationShared ? (
-                  <>
-                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-primary" />
-                    Location Shared
-                  </>
-                ) : (
-                  <>
-                    <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    {t('hero.cta.secondary')}
-                  </>
-                )}
-              </Button>
             </div>
 
             {/* Stats */}
