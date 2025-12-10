@@ -31,10 +31,41 @@ const WeatherDashboard = () => {
   useEffect(() => {
     if (user) {
       fetchUserProfile();
-      fetchWeatherData();
-      fetchAlerts();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (profile?.latitude && profile?.longitude) {
+      fetchWeatherData();
+    } else if (profile && !profile.latitude) {
+      // Try to get user's location
+      requestLocation();
+    }
+  }, [profile]);
+
+  const requestLocation = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          // Update profile with location
+          const { error } = await supabase
+            .from('user_profiles')
+            .update({ latitude, longitude })
+            .eq('user_id', user?.id);
+          
+          if (!error) {
+            setProfile((prev: any) => ({ ...prev, latitude, longitude }));
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          toast.error('Please enable location access for accurate weather data');
+          setLoading(false);
+        }
+      );
+    }
+  };
 
   const fetchUserProfile = async () => {
     const { data, error } = await supabase
@@ -45,16 +76,66 @@ const WeatherDashboard = () => {
 
     if (error) {
       console.error('Error fetching profile:', error);
+      setLoading(false);
     } else {
       setProfile(data);
     }
+    fetchAlerts();
   };
 
   const fetchWeatherData = async () => {
+    if (!profile?.latitude || !profile?.longitude) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
-    // This will be implemented once we add the edge function
-    // For now, show placeholder
-    setLoading(false);
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-weather', {
+        body: {
+          latitude: profile.latitude,
+          longitude: profile.longitude,
+          language: profile.preferred_language || 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      if (data.needsApiKey) {
+        toast.error('Weather API not configured. Please contact support.');
+        setLoading(false);
+        return;
+      }
+
+      setWeatherData(data);
+
+      // Fetch AI-powered crop recommendations
+      if (profile.primary_crops && profile.primary_crops.length > 0) {
+        fetchCropAdvice(data);
+      }
+    } catch (error: any) {
+      console.error('Error fetching weather:', error);
+      toast.error('Failed to fetch weather data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCropAdvice = async (weather: any) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('crop-advice', {
+        body: {
+          weatherData: weather,
+          crops: profile.primary_crops,
+          language: profile.preferred_language || 'en'
+        }
+      });
+
+      if (error) throw error;
+      setRecommendations(data);
+    } catch (error: any) {
+      console.error('Error fetching crop advice:', error);
+    }
   };
 
   const fetchAlerts = async () => {
