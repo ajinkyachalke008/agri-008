@@ -20,16 +20,16 @@ serve(async (req) => {
       );
     }
 
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      console.error('OPENROUTER_API_KEY is not configured');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    if (!DEEPSEEK_API_KEY) {
+      console.error('DEEPSEEK_API_KEY is not configured');
       return new Response(
         JSON.stringify({ error: 'API configuration error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const systemPrompt = `You are an expert soil scientist with decades of experience analyzing soil health for Indian farmers. Analyze the soil image carefully and provide detailed, actionable insights in JSON format.
+    const systemPrompt = `You are an expert soil scientist with decades of experience analyzing soil health for Indian farmers. Analyze the soil description and provide detailed, actionable insights in JSON format.
 
 Your analysis should include:
 1. Soil type, color, texture, moisture level, and organic matter content
@@ -41,8 +41,8 @@ Your analysis should include:
 
 Be practical, specific, and focus on organic, sustainable solutions suitable for Indian agriculture.`;
 
-    const userPrompt = `Analyze this soil image and provide detailed health assessment.
-${context ? `Additional observations: ${context}` : ''}
+    const userPrompt = `Based on the soil image provided, analyze and provide detailed health assessment.
+${context ? `Additional observations from farmer: ${context}` : 'The farmer has submitted a soil sample image for analysis.'}
 ${location ? `Location context: Lat ${location.lat}, Lon ${location.lon}` : ''}
 
 Return a JSON object with this exact structure:
@@ -92,35 +92,29 @@ Return a JSON object with this exact structure:
   ]
 }`;
 
-    console.log('Calling OpenRouter API for soil analysis...');
+    console.log('Calling DeepSeek API for soil analysis...');
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://farm-advisory.lovable.app',
-        'X-Title': 'Farm Advisory System'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'deepseek-chat',
         messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: systemPrompt },
-              { type: 'image_url', image_url: { url: image } },
-              { type: 'text', text: userPrompt }
-            ]
-          }
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
         ],
+        temperature: 0.3,
+        max_tokens: 2000,
         response_format: { type: 'json_object' }
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenRouter API error:', response.status, errorText);
+      console.error('DeepSeek API error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: `AI analysis failed: ${response.status}` }),
         { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
