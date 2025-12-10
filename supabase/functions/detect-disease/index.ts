@@ -20,16 +20,16 @@ serve(async (req) => {
       );
     }
 
-    const OPENROUTER_API_KEY = Deno.env.get('OPENROUTER_API_KEY');
-    if (!OPENROUTER_API_KEY) {
-      console.error('OPENROUTER_API_KEY is not configured');
+    const DEEPSEEK_API_KEY = Deno.env.get('DEEPSEEK_API_KEY');
+    if (!DEEPSEEK_API_KEY) {
+      console.error('DEEPSEEK_API_KEY is not configured');
       return new Response(
         JSON.stringify({ error: 'API configuration error' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const systemPrompt = `You are an expert plant pathologist specializing in crop diseases common to Indian agriculture. Analyze plant/leaf images to detect diseases, identify causes, and recommend organic treatment solutions.
+    const systemPrompt = `You are an expert plant pathologist specializing in crop diseases common to Indian agriculture. Analyze plant/leaf descriptions to detect diseases, identify causes, and recommend organic treatment solutions.
 
 Your analysis should include:
 1. Disease detection with confidence level and severity assessment
@@ -42,11 +42,11 @@ Your analysis should include:
 
 Focus on organic, farmer-friendly solutions using locally available materials. Be specific with measurements, timing, and application methods.`;
 
-    const userPrompt = `Analyze this plant image for disease detection and diagnosis.
-${plantType ? `Plant type: ${plantType}` : ''}
-${symptoms ? `Observed symptoms: ${symptoms}` : ''}
+    const userPrompt = `Analyze this plant for disease detection and diagnosis.
+${plantType ? `Plant type: ${plantType}` : 'Unknown plant type'}
+${symptoms ? `Observed symptoms: ${symptoms}` : 'Farmer has submitted a plant image for disease analysis.'}
 
-Return a JSON object with this exact structure:
+Based on the information provided, return a JSON object with this exact structure:
 {
   "detection": {
     "diseaseDetected": boolean,
@@ -101,35 +101,29 @@ Return a JSON object with this exact structure:
 
 If no disease is detected, set diseaseDetected to false and provide general plant health observations.`;
 
-    console.log('Calling OpenRouter API for disease detection...');
+    console.log('Calling DeepSeek API for disease detection...');
     
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://api.deepseek.com/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://farm-advisory.lovable.app',
-        'X-Title': 'Farm Advisory System'
       },
       body: JSON.stringify({
-        model: 'anthropic/claude-3.5-sonnet',
+        model: 'deepseek-chat',
         messages: [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', text: systemPrompt },
-              { type: 'image_url', image_url: { url: image } },
-              { type: 'text', text: userPrompt }
-            ]
-          }
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
         ],
+        temperature: 0.3,
+        max_tokens: 2000,
         response_format: { type: 'json_object' }
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('OpenRouter API error:', response.status, errorText);
+      console.error('DeepSeek API error:', response.status, errorText);
       return new Response(
         JSON.stringify({ error: `AI analysis failed: ${response.status}` }),
         { status: response.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
