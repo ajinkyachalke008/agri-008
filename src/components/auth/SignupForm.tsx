@@ -52,7 +52,11 @@ export const SignupForm = ({ onSwitchToLogin }: SignupFormProps) => {
     const { error } = await signInWithGoogle();
     
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
+        toast.error('Google signup is not configured yet. Please use email/password registration.');
+      } else {
+        toast.error(error.message);
+      }
       setGoogleLoading(false);
     }
   };
