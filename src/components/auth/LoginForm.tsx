@@ -29,7 +29,14 @@ export const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
     const { error } = await signIn(email, password);
 
     if (error) {
-      toast.error(error.message);
+      // Provide user-friendly error messages
+      if (error.message.includes('Invalid login credentials')) {
+        toast.error('Invalid email or password. If you don\'t have an account, please sign up first.');
+      } else if (error.message.includes('Email not confirmed')) {
+        toast.error('Please check your email and confirm your account before logging in.');
+      } else {
+        toast.error(error.message);
+      }
     } else {
       toast.success('Logged in successfully!');
       navigate('/weather');
@@ -43,7 +50,11 @@ export const LoginForm = ({ onSwitchToSignup }: LoginFormProps) => {
     const { error } = await signInWithGoogle();
     
     if (error) {
-      toast.error(error.message);
+      if (error.message.includes('provider is not enabled') || error.message.includes('Unsupported provider')) {
+        toast.error('Google login is not configured yet. Please use email/password or contact the administrator.');
+      } else {
+        toast.error(error.message);
+      }
       setGoogleLoading(false);
     }
     // Don't set loading to false on success - redirect will happen
