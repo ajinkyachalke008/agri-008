@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import SmartFarmSetup from "./pages/SmartFarmSetup";
 import SoilScanner from "./pages/SoilScanner";
@@ -29,13 +30,41 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
-              <Route path="/weather" element={<WeatherDashboard />} />
-              <Route path="/signup" element={<SmartFarmSetup />} />
-              <Route path="/scan/soil" element={<SoilScanner />} />
-              <Route path="/scan/disease" element={<DiseaseScanner />} />
-              <Route path="/marketplace/sell" element={<SellCrops />} />
-              <Route path="/marketplace/buy" element={<BuyCrops />} />
-              <Route path="/schemes" element={<SchemesDashboard />} />
+              <Route path="/weather" element={
+                <ProtectedRoute>
+                  <WeatherDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/setup" element={
+                <ProtectedRoute>
+                  <SmartFarmSetup />
+                </ProtectedRoute>
+              } />
+              <Route path="/scan/soil" element={
+                <ProtectedRoute>
+                  <SoilScanner />
+                </ProtectedRoute>
+              } />
+              <Route path="/scan/disease" element={
+                <ProtectedRoute>
+                  <DiseaseScanner />
+                </ProtectedRoute>
+              } />
+              <Route path="/marketplace/sell" element={
+                <ProtectedRoute>
+                  <SellCrops />
+                </ProtectedRoute>
+              } />
+              <Route path="/marketplace/buy" element={
+                <ProtectedRoute>
+                  <BuyCrops />
+                </ProtectedRoute>
+              } />
+              <Route path="/schemes" element={
+                <ProtectedRoute>
+                  <SchemesDashboard />
+                </ProtectedRoute>
+              } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

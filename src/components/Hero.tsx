@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Smartphone, PlayCircle, MapPin, Wifi, Mic, Cloud } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Smartphone, PlayCircle, MapPin, Wifi, Mic, Cloud, LogIn, LogOut, User } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import heroImage from "@/assets/hero-farming.jpg";
 import heroVideo from "@/assets/hero-video.mp4";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/contexts/AuthContext";
 import LocationPermissionDialog from "./LocationPermissionDialog";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useToast } from "@/hooks/use-toast";
@@ -12,8 +13,18 @@ import { useToast } from "@/hooks/use-toast";
 const Hero = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [showLocationDialog, setShowLocationDialog] = useState(false);
   const [locationShared, setLocationShared] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully.",
+    });
+  };
 
   const handleLocationPermission = () => {
     setShowLocationDialog(true);
@@ -67,8 +78,27 @@ const Hero = () => {
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
-        {/* Language Switcher - Top Right */}
-        <div className="absolute top-4 right-6 z-20">
+        {/* Top Right - Language Switcher & Auth */}
+        <div className="absolute top-4 right-6 z-20 flex items-center gap-3">
+          {user ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-foreground/80 hidden sm:inline">
+                <User className="w-4 h-4 inline mr-1" />
+                {user.email?.split('@')[0]}
+              </span>
+              <Button variant="outline" size="sm" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-1" />
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth">
+              <Button variant="outline" size="sm">
+                <LogIn className="w-4 h-4 mr-1" />
+                Login
+              </Button>
+            </Link>
+          )}
           <LanguageSwitcher />
         </div>
 
@@ -105,18 +135,37 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <Link to="/auth" className="w-full sm:w-auto">
-                <Button variant="hero" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
-                  <Cloud className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Weather Alerts
-                </Button>
-              </Link>
-              <Link to="/signup" className="w-full sm:w-auto">
-                <Button variant="glass" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
-                  <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  {t('hero.cta.primary')}
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/weather" className="w-full sm:w-auto">
+                    <Button variant="hero" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
+                      <Cloud className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Weather Dashboard
+                    </Button>
+                  </Link>
+                  <Link to="/scan/soil" className="w-full sm:w-auto">
+                    <Button variant="glass" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
+                      <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Soil Scanner
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/auth" className="w-full sm:w-auto">
+                    <Button variant="hero" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
+                      <LogIn className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      Get Started
+                    </Button>
+                  </Link>
+                  <Link to="/auth" className="w-full sm:w-auto">
+                    <Button variant="glass" size="lg" className="text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full">
+                      <Smartphone className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                      {t('hero.cta.primary')}
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Stats */}
