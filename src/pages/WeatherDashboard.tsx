@@ -8,6 +8,7 @@ import { WeatherCurrent } from '@/components/weather/WeatherCurrent';
 import { WeatherForecast } from '@/components/weather/WeatherForecast';
 import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
 import { CropRecommendations } from '@/components/weather/CropRecommendations';
+import { FarmingActivities } from '@/components/weather/FarmingActivities';
 import { LocationSettings } from '@/components/weather/LocationSettings';
 import { LocationMap } from '@/components/weather/LocationMap';
 import { LogOut, RefreshCw, Settings, MapPin } from 'lucide-react';
@@ -228,6 +229,12 @@ const WeatherDashboard = () => {
 
           {/* 7-Day Forecast */}
           <WeatherForecast forecast={weatherData?.daily || []} />
+
+          {/* Farming Activities Schedule */}
+          <FarmingActivities 
+            activities={recommendations?.activities} 
+            isLoading={loading && profile?.primary_crops?.length > 0}
+          />
 
           {/* Farming Recommendations */}
           <CropRecommendations recommendations={recommendations} crops={profile?.primary_crops} />
