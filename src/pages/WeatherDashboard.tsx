@@ -9,6 +9,7 @@ import { WeatherForecast } from '@/components/weather/WeatherForecast';
 import { WeatherAlerts } from '@/components/weather/WeatherAlerts';
 import { CropRecommendations } from '@/components/weather/CropRecommendations';
 import { LocationSettings } from '@/components/weather/LocationSettings';
+import { LocationMap } from '@/components/weather/LocationMap';
 import { LogOut, RefreshCw, Settings, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -212,8 +213,18 @@ const WeatherDashboard = () => {
           {/* Alerts Banner */}
           {alerts.length > 0 && <WeatherAlerts alerts={alerts} />}
 
-          {/* Current Weather */}
-          <WeatherCurrent weatherData={weatherData} />
+          {/* Location Map and Current Weather */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <WeatherCurrent weatherData={weatherData} />
+            </div>
+            <LocationMap 
+              latitude={profile?.latitude} 
+              longitude={profile?.longitude}
+              district={profile?.district}
+              taluka={profile?.taluka}
+            />
+          </div>
 
           {/* 7-Day Forecast */}
           <WeatherForecast forecast={weatherData?.daily || []} />

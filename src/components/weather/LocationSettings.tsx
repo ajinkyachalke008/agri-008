@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -28,6 +28,17 @@ export const LocationSettings = ({ profile, onClose, onUpdate }: LocationSetting
   });
   const [loading, setLoading] = useState(false);
   const [cropsInput, setCropsInput] = useState('');
+
+  // Get talukas for the selected district
+  const availableTalukas = useMemo(() => {
+    const selectedDistrict = maharashtraDistricts.find(d => d.name === formData.district);
+    return selectedDistrict?.talukas || [];
+  }, [formData.district]);
+
+  // Reset taluka when district changes
+  const handleDistrictChange = (district: string) => {
+    setFormData({ ...formData, district, taluka: '' });
+  };
 
   useEffect(() => {
     if (profile?.primary_crops) {
@@ -97,11 +108,11 @@ export const LocationSettings = ({ profile, onClose, onUpdate }: LocationSetting
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>District</Label>
-                <Select value={formData.district} onValueChange={(value) => setFormData({ ...formData, district: value })}>
+                <Select value={formData.district} onValueChange={handleDistrictChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select district" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-[300px]">
                     {maharashtraDistricts.map((district) => (
                       <SelectItem key={district.name} value={district.name}>
                         {district.name}
@@ -113,11 +124,22 @@ export const LocationSettings = ({ profile, onClose, onUpdate }: LocationSetting
 
               <div className="space-y-2">
                 <Label>Taluka</Label>
-                <Input
-                  value={formData.taluka}
-                  onChange={(e) => setFormData({ ...formData, taluka: e.target.value })}
-                  placeholder="Enter taluka"
-                />
+                <Select 
+                  value={formData.taluka} 
+                  onValueChange={(value) => setFormData({ ...formData, taluka: value })}
+                  disabled={!formData.district}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={formData.district ? "Select taluka" : "Select district first"} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {availableTalukas.map((taluka) => (
+                      <SelectItem key={taluka.name} value={taluka.name}>
+                        {taluka.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
