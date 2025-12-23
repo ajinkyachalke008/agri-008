@@ -10,58 +10,28 @@ interface LocationMapProps {
 }
 
 export const LocationMap = ({ latitude, longitude, district, taluka }: LocationMapProps) => {
-  const [MapComponent, setMapComponent] = useState<React.ComponentType<any> | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
-    
-    // Dynamically import Leaflet components only on client side
-    const loadMap = async () => {
-      try {
-        const L = await import('leaflet');
-        await import('leaflet/dist/leaflet.css');
-        const { MapContainer, TileLayer, Marker, Popup } = await import('react-leaflet');
-        
-        // Fix for default marker icon
-        delete (L.Icon.Default.prototype as any)._getIconUrl;
-        L.Icon.Default.mergeOptions({
-          iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-          iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-        });
-
-        // Create a wrapper component
-        const MapWrapper = ({ lat, lng, dist, tal }: { lat: number; lng: number; dist?: string; tal?: string }) => (
-          <MapContainer
-            center={[lat, lng]}
-            zoom={10}
-            scrollWheelZoom={false}
-            style={{ height: '100%', width: '100%' }}
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={[lat, lng]}>
-              <Popup>
-                <div className="text-center">
-                  <p className="font-semibold">{dist}</p>
-                  {tal && <p className="text-sm">{tal}</p>}
-                </div>
-              </Popup>
-            </Marker>
-          </MapContainer>
-        );
-
-        setMapComponent(() => MapWrapper);
-      } catch (error) {
-        console.error('Failed to load map:', error);
-      }
-    };
-
-    loadMap();
+    // Only run on client
+    if (typeof window !== 'undefined') {
+      setIsMapReady(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (isMapReady && latitude && longitude) {
+      // Load leaflet CSS
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+      
+      // Small delay to ensure CSS is loaded
+      setTimeout(() => setLeafletLoaded(true), 100);
+    }
+  }, [isMapReady, latitude, longitude]);
 
   if (!latitude || !longitude || typeof latitude !== 'number' || typeof longitude !== 'number') {
     return (
@@ -81,7 +51,7 @@ export const LocationMap = ({ latitude, longitude, district, taluka }: LocationM
     );
   }
 
-  if (!isClient || !MapComponent) {
+  if (!leafletLoaded) {
     return (
       <Card>
         <CardHeader className="pb-3">
@@ -109,9 +79,58 @@ export const LocationMap = ({ latitude, longitude, district, taluka }: LocationM
       </CardHeader>
       <CardContent>
         <div className="h-[200px] rounded-lg overflow-hidden">
-          <MapComponent lat={latitude} lng={longitude} dist={district} tal={taluka} />
+          <LeafletMap 
+            latitude={latitude} 
+            longitude={longitude} 
+            district={district} 
+            taluka={taluka} 
+          />
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+// Separate component to avoid re-renders
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+// Fix for default marker icon
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
+
+interface LeafletMapProps {
+  latitude: number;
+  longitude: number;
+  district?: string;
+  taluka?: string;
+}
+
+const LeafletMap = ({ latitude, longitude, district, taluka }: LeafletMapProps) => {
+  return (
+    <MapContainer
+      center={[latitude, longitude]}
+      zoom={10}
+      scrollWheelZoom={false}
+      style={{ height: '100%', width: '100%' }}
+    >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Marker position={[latitude, longitude]}>
+        <Popup>
+          <div className="text-center">
+            <p className="font-semibold">{district}</p>
+            {taluka && <p className="text-sm">{taluka}</p>}
+          </div>
+        </Popup>
+      </Marker>
+    </MapContainer>
   );
 };
