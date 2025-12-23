@@ -7,6 +7,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Safe JSON parse with validation for search results
+function safeParseSearchResults(jsonStr: string): Array<{ scheme_id: string; relevance_score: number; match_reason: string }> {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    const results = parsed?.results;
+    
+    if (!Array.isArray(results)) {
+      console.warn('Results is not an array, returning empty');
+      return [];
+    }
+    
+    // Validate and sanitize each result
+    return results
+      .filter((item: unknown) => {
+        if (typeof item !== 'object' || item === null) return false;
+        const r = item as Record<string, unknown>;
+        return typeof r.scheme_id === 'string' && r.scheme_id.length > 0;
+      })
+      .map((item: Record<string, unknown>) => ({
+        scheme_id: String(item.scheme_id).slice(0, 100),
+        relevance_score: typeof item.relevance_score === 'number' 
+          ? Math.min(100, Math.max(0, item.relevance_score)) 
+          : 50,
+        match_reason: typeof item.match_reason === 'string' 
+          ? String(item.match_reason).slice(0, 500) 
+          : 'No match reason provided'
+      }));
+  } catch (e) {
+    console.error('Failed to parse search results:', e);
+    return [];
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -154,18 +187,20 @@ Return top ${limit} most relevant schemes.`;
     const aiData = await aiResponse.json();
     console.log('AI search response received');
 
-    // Extract results from tool call
+    // Extract and validate results from tool call
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-    const searchResults = toolCall ? JSON.parse(toolCall.function.arguments).results : [];
+    const searchResults = toolCall 
+      ? safeParseSearchResults(toolCall.function.arguments)
+      : [];
 
     // Enrich results with full scheme data
-    const enrichedResults = searchResults.map((result: any) => {
+    const enrichedResults = searchResults.map((result) => {
       const scheme = schemes?.find(s => s.id === result.scheme_id);
       return {
         ...result,
         scheme: scheme || null
       };
-    }).filter((result: any) => result.scheme !== null);
+    }).filter((result) => result.scheme !== null);
 
     console.log(`Returning ${enrichedResults.length} search results`);
 

@@ -5,6 +5,150 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface Activity {
+  activity: string;
+  timing: string;
+  recommendation: 'should_do' | 'avoid' | 'optimal';
+  reason: string;
+  details: string;
+}
+
+interface CropAdvice {
+  activities: Activity[];
+  goodFor: string[];
+  avoid: string[];
+  cropAdvice: string[];
+  warnings: string[];
+  summary: string;
+  fullAdvice?: string;
+}
+
+// Safe JSON parse with validation for crop advice
+function safeParseAdvice(content: string, weatherData: Record<string, unknown>): CropAdvice {
+  try {
+    // Extract JSON from the response (handle markdown code blocks)
+    const jsonMatch = content.match(/```json\s*([\s\S]*?)\s*```/) || 
+                      content.match(/```\s*([\s\S]*?)\s*```/) ||
+                      [null, content];
+    const jsonStr = jsonMatch[1] || content;
+    const parsed = JSON.parse(jsonStr.trim());
+    
+    // Validate and sanitize activities
+    const activities: Activity[] = Array.isArray(parsed.activities) 
+      ? parsed.activities.slice(0, 10).map((item: Record<string, unknown>) => ({
+          activity: typeof item.activity === 'string' ? String(item.activity).slice(0, 100) : 'Activity',
+          timing: typeof item.timing === 'string' ? String(item.timing).slice(0, 100) : '',
+          recommendation: ['should_do', 'avoid', 'optimal'].includes(String(item.recommendation)) 
+            ? item.recommendation as 'should_do' | 'avoid' | 'optimal'
+            : 'should_do',
+          reason: typeof item.reason === 'string' ? String(item.reason).slice(0, 300) : '',
+          details: typeof item.details === 'string' ? String(item.details).slice(0, 500) : ''
+        }))
+      : generateDefaultActivities(weatherData);
+    
+    return {
+      activities,
+      goodFor: Array.isArray(parsed.goodFor) 
+        ? parsed.goodFor.filter((g: unknown) => typeof g === 'string').map((g: string) => String(g).slice(0, 200)).slice(0, 10)
+        : [],
+      avoid: Array.isArray(parsed.avoid) 
+        ? parsed.avoid.filter((a: unknown) => typeof a === 'string').map((a: string) => String(a).slice(0, 200)).slice(0, 10)
+        : [],
+      cropAdvice: Array.isArray(parsed.cropAdvice) 
+        ? parsed.cropAdvice.filter((c: unknown) => typeof c === 'string').map((c: string) => String(c).slice(0, 300)).slice(0, 10)
+        : [],
+      warnings: Array.isArray(parsed.warnings) 
+        ? parsed.warnings.filter((w: unknown) => typeof w === 'string').map((w: string) => String(w).slice(0, 300)).slice(0, 10)
+        : [],
+      summary: typeof parsed.summary === 'string' ? String(parsed.summary).slice(0, 500) : '',
+      fullAdvice: content
+    };
+  } catch (e) {
+    console.log('Failed to parse JSON, using text extraction fallback:', e);
+    // Fallback to text extraction if JSON parsing fails
+    return {
+      activities: generateDefaultActivities(weatherData),
+      goodFor: extractSection(content, 'good'),
+      avoid: extractSection(content, 'avoid'),
+      cropAdvice: extractSection(content, 'advice'),
+      warnings: extractSection(content, 'warning'),
+      summary: content.substring(0, 200),
+      fullAdvice: content,
+    };
+  }
+}
+
+function generateDefaultActivities(weatherData: Record<string, unknown>): Activity[] {
+  const current = weatherData?.current as Record<string, unknown> | undefined;
+  const temp = typeof current?.temp === 'number' ? current.temp : 25;
+  const humidity = typeof current?.humidity === 'number' ? current.humidity : 60;
+  const windSpeed = typeof current?.wind_speed === 'number' ? current.wind_speed : 10;
+  const description = typeof current?.description === 'string' ? current.description : '';
+  const isRainy = description.toLowerCase().includes('rain');
+
+  const activities: Activity[] = [
+    {
+      activity: "Irrigation",
+      timing: temp > 30 ? "Early morning 5-7 AM or Evening 5-7 PM" : "Morning 6-9 AM",
+      recommendation: isRainy ? "avoid" : (humidity < 50 ? "optimal" : "should_do"),
+      reason: isRainy ? "Rain expected, no irrigation needed" : (humidity < 50 ? "Low humidity, ideal for irrigation" : "Moderate conditions"),
+      details: isRainy ? "Skip irrigation as rain is expected. Save water and let natural rainfall hydrate your crops." : "Apply water at the base of plants. Avoid wetting leaves to prevent fungal diseases."
+    },
+    {
+      activity: "Pesticide Spraying",
+      timing: windSpeed < 15 ? "Early morning 6-8 AM" : "Wait for calmer conditions",
+      recommendation: windSpeed > 20 || isRainy ? "avoid" : "should_do",
+      reason: windSpeed > 20 ? "High wind will cause spray drift" : (isRainy ? "Rain will wash off pesticides" : "Good conditions for spraying"),
+      details: windSpeed > 20 ? "Postpone spraying. High winds will reduce effectiveness and may damage nearby crops." : "Use appropriate protective gear. Spray in the direction of wind for even coverage."
+    },
+    {
+      activity: "Fertilizer Application",
+      timing: "Morning 7-9 AM",
+      recommendation: isRainy ? "optimal" : "should_do",
+      reason: isRainy ? "Light rain helps fertilizer absorption" : "Apply before irrigation for best results",
+      details: "Apply fertilizer evenly around the plant base. Water lightly after application to help nutrients reach the roots."
+    },
+    {
+      activity: "Harvesting",
+      timing: humidity < 60 ? "Morning 8-11 AM" : "Wait for drier conditions",
+      recommendation: humidity > 80 || isRainy ? "avoid" : "optimal",
+      reason: humidity > 80 ? "High moisture may damage harvested crops" : "Good conditions for harvesting",
+      details: humidity > 80 ? "Wait for humidity to drop. Harvesting wet crops can lead to storage problems." : "Harvest when crops are dry. Store in cool, ventilated area."
+    },
+    {
+      activity: "Weeding",
+      timing: "Morning 7-10 AM",
+      recommendation: temp > 35 ? "avoid" : "should_do",
+      reason: temp > 35 ? "Too hot for field work" : "Good conditions for weeding",
+      details: temp > 35 ? "Postpone to cooler hours to avoid heat stress." : "Remove weeds before they seed. Dispose of weeds away from the field."
+    }
+  ];
+
+  return activities;
+}
+
+function extractSection(text: string, keyword: string): string[] {
+  const lines = text.split('\n');
+  const results: string[] = [];
+  let capturing = false;
+  
+  for (const line of lines) {
+    if (line.toLowerCase().includes(keyword.toLowerCase())) {
+      capturing = true;
+      continue;
+    }
+    if (capturing) {
+      if (line.match(/^\d+\.|^-|^•|^\*/)) {
+        results.push(line.replace(/^\d+\.|^-|^•|^\*/, '').trim().slice(0, 200));
+      } else if (line.trim() === '' || line.match(/^[A-Z]|^[अ-ह]/)) {
+        capturing = false;
+      }
+    }
+  }
+  
+  return results.slice(0, 5);
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -33,17 +177,21 @@ Deno.serve(async (req) => {
       ? `The farmer is growing: ${crops.join(', ')}.` 
       : 'No specific crops mentioned.';
 
+    const current = weatherData?.current as Record<string, unknown> | undefined;
+    const daily = weatherData?.daily as Array<Record<string, unknown>> | undefined;
+    
     const weatherSummary = weatherData ? `
 Current Weather:
-- Temperature: ${weatherData.current?.temp || 'N/A'}°C (Feels like: ${weatherData.current?.feels_like || 'N/A'}°C)
-- Humidity: ${weatherData.current?.humidity || 'N/A'}%
-- Wind Speed: ${weatherData.current?.wind_speed || 'N/A'} km/h
-- Conditions: ${weatherData.current?.description || 'Unknown'}
+- Temperature: ${current?.temp ?? 'N/A'}°C (Feels like: ${current?.feels_like ?? 'N/A'}°C)
+- Humidity: ${current?.humidity ?? 'N/A'}%
+- Wind Speed: ${current?.wind_speed ?? 'N/A'} km/h
+- Conditions: ${current?.description ?? 'Unknown'}
 
 7-Day Forecast Summary:
-${weatherData.daily?.slice(0, 7).map((day: any, i: number) => 
-  `Day ${i + 1}: ${day.temp?.min || 'N/A'}°C - ${day.temp?.max || 'N/A'}°C, ${day.description || 'Unknown'}, Rain: ${day.rain || 0}mm, Humidity: ${day.humidity || 'N/A'}%`
-).join('\n') || 'No forecast available'}
+${daily?.slice(0, 7).map((day, i: number) => {
+  const temp = day.temp as Record<string, unknown> | undefined;
+  return `Day ${i + 1}: ${temp?.min ?? 'N/A'}°C - ${temp?.max ?? 'N/A'}°C, ${day.description ?? 'Unknown'}, Rain: ${day.rain ?? 0}mm, Humidity: ${day.humidity ?? 'N/A'}%`;
+}).join('\n') || 'No forecast available'}
     ` : 'No weather data available.';
 
     const systemPrompt = language === 'mr' 
@@ -135,41 +283,10 @@ Respond with a valid JSON object only.`;
       throw new Error('No advice generated');
     }
 
-    console.log('Raw AI response:', adviceText);
+    console.log('AI response received');
 
-    // Try to parse JSON from the response
-    let recommendations;
-    try {
-      // Extract JSON from the response (handle markdown code blocks)
-      const jsonMatch = adviceText.match(/```json\s*([\s\S]*?)\s*```/) || 
-                        adviceText.match(/```\s*([\s\S]*?)\s*```/) ||
-                        [null, adviceText];
-      const jsonStr = jsonMatch[1] || adviceText;
-      recommendations = JSON.parse(jsonStr.trim());
-    } catch (parseError) {
-      console.log('Failed to parse JSON, using text extraction fallback');
-      // Fallback to text extraction if JSON parsing fails
-      recommendations = {
-        activities: generateDefaultActivities(weatherData),
-        goodFor: extractSection(adviceText, 'good'),
-        avoid: extractSection(adviceText, 'avoid'),
-        cropAdvice: extractSection(adviceText, 'advice'),
-        warnings: extractSection(adviceText, 'warning'),
-        summary: adviceText.substring(0, 200),
-        fullAdvice: adviceText,
-      };
-    }
-
-    // Ensure all expected fields exist
-    recommendations = {
-      activities: recommendations.activities || generateDefaultActivities(weatherData),
-      goodFor: recommendations.goodFor || [],
-      avoid: recommendations.avoid || [],
-      cropAdvice: recommendations.cropAdvice || [],
-      warnings: recommendations.warnings || [],
-      summary: recommendations.summary || '',
-      fullAdvice: adviceText,
-    };
+    // Parse and validate the advice with fallbacks
+    const recommendations = safeParseAdvice(adviceText, weatherData || {});
 
     console.log('Crop advice generated successfully');
 
@@ -181,7 +298,7 @@ Respond with a valid JSON object only.`;
   } catch (error) {
     console.error('Error in crop-advice function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -189,72 +306,3 @@ Respond with a valid JSON object only.`;
     );
   }
 });
-
-function generateDefaultActivities(weatherData: any) {
-  const temp = weatherData?.current?.temp || 25;
-  const humidity = weatherData?.current?.humidity || 60;
-  const windSpeed = weatherData?.current?.wind_speed || 10;
-  const isRainy = weatherData?.current?.description?.toLowerCase().includes('rain');
-
-  const activities = [
-    {
-      activity: "Irrigation",
-      timing: temp > 30 ? "Early morning 5-7 AM or Evening 5-7 PM" : "Morning 6-9 AM",
-      recommendation: isRainy ? "avoid" : (humidity < 50 ? "optimal" : "should_do"),
-      reason: isRainy ? "Rain expected, no irrigation needed" : (humidity < 50 ? "Low humidity, ideal for irrigation" : "Moderate conditions"),
-      details: isRainy ? "Skip irrigation as rain is expected. Save water and let natural rainfall hydrate your crops." : "Apply water at the base of plants. Avoid wetting leaves to prevent fungal diseases."
-    },
-    {
-      activity: "Pesticide Spraying",
-      timing: windSpeed < 15 ? "Early morning 6-8 AM" : "Wait for calmer conditions",
-      recommendation: windSpeed > 20 || isRainy ? "avoid" : "should_do",
-      reason: windSpeed > 20 ? "High wind will cause spray drift" : (isRainy ? "Rain will wash off pesticides" : "Good conditions for spraying"),
-      details: windSpeed > 20 ? "Postpone spraying. High winds will reduce effectiveness and may damage nearby crops." : "Use appropriate protective gear. Spray in the direction of wind for even coverage."
-    },
-    {
-      activity: "Fertilizer Application",
-      timing: "Morning 7-9 AM",
-      recommendation: isRainy ? "optimal" : (humidity > 70 ? "should_do" : "should_do"),
-      reason: isRainy ? "Light rain helps fertilizer absorption" : "Apply before irrigation for best results",
-      details: "Apply fertilizer evenly around the plant base. Water lightly after application to help nutrients reach the roots."
-    },
-    {
-      activity: "Harvesting",
-      timing: humidity < 60 ? "Morning 8-11 AM" : "Wait for drier conditions",
-      recommendation: humidity > 80 || isRainy ? "avoid" : "optimal",
-      reason: humidity > 80 ? "High moisture may damage harvested crops" : "Good conditions for harvesting",
-      details: humidity > 80 ? "Wait for humidity to drop. Harvesting wet crops can lead to storage problems." : "Harvest when crops are dry. Store in cool, ventilated area."
-    },
-    {
-      activity: "Weeding",
-      timing: "Morning 7-10 AM",
-      recommendation: temp > 35 ? "avoid" : "should_do",
-      reason: temp > 35 ? "Too hot for field work" : "Good conditions for weeding",
-      details: temp > 35 ? "Postpone to cooler hours to avoid heat stress." : "Remove weeds before they seed. Dispose of weeds away from the field."
-    }
-  ];
-
-  return activities;
-}
-
-function extractSection(text: string, keyword: string): string[] {
-  const lines = text.split('\n');
-  const results: string[] = [];
-  let capturing = false;
-  
-  for (const line of lines) {
-    if (line.toLowerCase().includes(keyword.toLowerCase())) {
-      capturing = true;
-      continue;
-    }
-    if (capturing) {
-      if (line.match(/^\d+\.|^-|^•|^\*/)) {
-        results.push(line.replace(/^\d+\.|^-|^•|^\*/, '').trim());
-      } else if (line.trim() === '' || line.match(/^[A-Z]|^[अ-ह]/)) {
-        capturing = false;
-      }
-    }
-  }
-  
-  return results.slice(0, 5);
-}
