@@ -40,13 +40,38 @@ function safeParseRecommendations(jsonStr: string): Array<{ scheme_id: string; r
   }
 }
 
+// Sanitize user profile data
+function sanitizeUserProfile(profile: unknown): Record<string, unknown> {
+  if (typeof profile !== 'object' || profile === null) return {};
+  const sanitized: Record<string, unknown> = {};
+  const allowed = ['state', 'district', 'taluka', 'farmSize', 'crops', 'category', 'needs'];
+  for (const key of allowed) {
+    const value = (profile as Record<string, unknown>)[key];
+    if (typeof value === 'string') {
+      sanitized[key] = value.slice(0, 100).replace(/[<>{}[\]\\]/g, '');
+    } else if (Array.isArray(value)) {
+      sanitized[key] = value.slice(0, 10).map(v => 
+        typeof v === 'string' ? v.slice(0, 50).replace(/[<>{}[\]\\]/g, '') : ''
+      ).filter(Boolean);
+    } else if (typeof value === 'number') {
+      sanitized[key] = Math.min(Math.max(0, value), 10000);
+    }
+  }
+  return sanitized;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { userProfile, limit = 10 } = await req.json();
+    const body = await req.json();
+    
+    // Sanitize inputs
+    const userProfile = sanitizeUserProfile(body.userProfile);
+    const limit = Math.min(Math.max(1, parseInt(body.limit) || 10), 20);
+    
     console.log('Recommend schemes request:', { userProfile, limit });
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');

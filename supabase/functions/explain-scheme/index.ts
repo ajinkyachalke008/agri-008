@@ -7,18 +7,67 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Input validation helpers
+function sanitizeInput(value: unknown, maxLength: number): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength).replace(/[<>{}[\]\\]/g, '');
+}
+
+function isValidUUID(value: unknown): boolean {
+  if (typeof value !== 'string') return false;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(value);
+}
+
+function sanitizeUserContext(context: unknown): Record<string, unknown> | null {
+  if (typeof context !== 'object' || context === null) return null;
+  const sanitized: Record<string, unknown> = {};
+  const ctx = context as Record<string, unknown>;
+  const allowed = ['farmSize', 'crops', 'district', 'state', 'category'];
+  for (const key of allowed) {
+    const value = ctx[key];
+    if (typeof value === 'string') {
+      sanitized[key] = value.slice(0, 100).replace(/[<>{}[\]\\]/g, '');
+    } else if (Array.isArray(value)) {
+      sanitized[key] = value.slice(0, 10).map(v => 
+        typeof v === 'string' ? v.slice(0, 50).replace(/[<>{}[\]\\]/g, '') : ''
+      ).filter(Boolean);
+    } else if (typeof value === 'number') {
+      sanitized[key] = Math.min(Math.max(0, value), 10000);
+    }
+  }
+  return Object.keys(sanitized).length > 0 ? sanitized : null;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { schemeId, question, language = 'en', userContext } = await req.json();
-    console.log('Explain scheme request:', { schemeId, question, language });
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const schemeId = body.schemeId;
+    const question = sanitizeInput(body.question, 500);
+    const language = ['en', 'mr'].includes(body.language) ? body.language : 'en';
+    const userContext = sanitizeUserContext(body.userContext);
+    
+    console.log('Explain scheme request:', { schemeId, question: question.slice(0, 50), language });
 
-    if (!schemeId || !question) {
+    if (!isValidUUID(schemeId)) {
       return new Response(
-        JSON.stringify({ error: 'Missing schemeId or question' }),
+        JSON.stringify({ error: 'Invalid scheme ID' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+    
+    if (!question || question.length < 3) {
+      return new Response(
+        JSON.stringify({ error: 'Question must be at least 3 characters' }),
         { 
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }

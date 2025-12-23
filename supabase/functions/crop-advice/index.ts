@@ -149,13 +149,37 @@ function extractSection(text: string, keyword: string): string[] {
   return results.slice(0, 5);
 }
 
+// Input validation helpers
+function sanitizeCrops(crops: unknown): string[] {
+  if (!Array.isArray(crops)) return [];
+  return crops
+    .filter((c): c is string => typeof c === 'string')
+    .map(c => c.trim().slice(0, 50).replace(/[<>{}[\]\\]/g, ''))
+    .filter(c => c.length > 0)
+    .slice(0, 20);
+}
+
+function sanitizeWeatherData(data: unknown): Record<string, unknown> | null {
+  if (typeof data !== 'object' || data === null) return null;
+  // Accept weather data as-is since it comes from our own weather function
+  // but limit the size to prevent abuse
+  const jsonStr = JSON.stringify(data);
+  if (jsonStr.length > 50000) return null;
+  return data as Record<string, unknown>;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { weatherData, crops, language = 'en' } = await req.json();
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const weatherData = sanitizeWeatherData(body.weatherData);
+    const crops = sanitizeCrops(body.crops);
+    const language = ['en', 'mr'].includes(body.language) ? body.language : 'en';
 
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     

@@ -55,13 +55,50 @@ function safeParsePriceData(content: string): PriceData | null {
   }
 }
 
+// Input validation helper
+function validateInput(value: unknown, maxLength: number, fieldName: string): string {
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim().slice(0, maxLength);
+  // Remove potentially dangerous characters for prompt injection
+  return trimmed.replace(/[<>{}[\]\\]/g, '');
+}
+
+function validateNumber(value: unknown, min: number, max: number): number | null {
+  const num = typeof value === 'number' ? value : parseFloat(String(value));
+  if (isNaN(num) || num < min || num > max) return null;
+  return num;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cropName, category, quantity, unit, state, district, isOrganic } = await req.json();
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const cropName = validateInput(body.cropName, 100, 'cropName');
+    const category = validateInput(body.category, 50, 'category');
+    const unit = validateInput(body.unit, 20, 'unit');
+    const state = validateInput(body.state, 50, 'state');
+    const district = validateInput(body.district, 50, 'district');
+    const quantity = validateNumber(body.quantity, 0, 1000000);
+    const isOrganic = Boolean(body.isOrganic);
+    
+    if (!cropName || !category || !unit || !state || !district) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    if (quantity === null) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid quantity' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
