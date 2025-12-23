@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -174,6 +175,35 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    
+    // Verify user
+    const supabaseAuth = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    
+    const { data: { user }, error: userError } = await supabaseAuth.auth.getUser();
+    if (userError || !user) {
+      console.error('Auth error:', userError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired session' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    console.log('Authenticated user:', user.id);
+
     const body = await req.json();
     
     // Validate and sanitize inputs
@@ -181,8 +211,6 @@ Deno.serve(async (req) => {
     const crops = sanitizeCrops(body.crops);
     const language = ['en', 'mr'].includes(body.language) ? body.language : 'en';
 
-    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
-    
     if (!lovableApiKey) {
       console.error('LOVABLE_API_KEY not configured');
       return new Response(

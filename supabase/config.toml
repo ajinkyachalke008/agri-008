@@ -1,25 +1,25 @@
 project_id = "hhnwlezszfuztzhjrvog"
 
 [functions.analyze-soil]
-verify_jwt = false
+verify_jwt = true
 
 [functions.detect-disease]
-verify_jwt = false
+verify_jwt = true
 
 [functions.suggest-price]
-verify_jwt = false
+verify_jwt = true
 
 [functions.recommend-schemes]
-verify_jwt = false
+verify_jwt = true
 
 [functions.search-schemes]
-verify_jwt = false
+verify_jwt = true
 
 [functions.explain-scheme]
-verify_jwt = false
+verify_jwt = true
 
 [functions.fetch-weather]
 verify_jwt = false
 
 [functions.crop-advice]
-verify_jwt = false
+verify_jwt = true
