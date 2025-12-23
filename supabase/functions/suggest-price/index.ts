@@ -5,6 +5,56 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface PriceData {
+  suggestedPrice: number;
+  minPrice: number;
+  maxPrice: number;
+  analysis: string;
+  factors: string[];
+}
+
+// Safe JSON parse with validation for price data
+function safeParsePriceData(content: string): PriceData | null {
+  try {
+    // Try to extract JSON from markdown code blocks if present
+    const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
+    const jsonStr = jsonMatch ? jsonMatch[1] : content;
+    const parsed = JSON.parse(jsonStr);
+    
+    // Validate and sanitize the parsed data
+    const suggestedPrice = typeof parsed.suggestedPrice === 'number' && parsed.suggestedPrice > 0
+      ? Math.round(parsed.suggestedPrice * 100) / 100
+      : null;
+    
+    if (suggestedPrice === null) {
+      console.warn('Invalid suggestedPrice in response');
+      return null;
+    }
+    
+    return {
+      suggestedPrice,
+      minPrice: typeof parsed.minPrice === 'number' && parsed.minPrice > 0
+        ? Math.round(parsed.minPrice * 100) / 100
+        : Math.round(suggestedPrice * 0.8 * 100) / 100,
+      maxPrice: typeof parsed.maxPrice === 'number' && parsed.maxPrice > 0
+        ? Math.round(parsed.maxPrice * 100) / 100
+        : Math.round(suggestedPrice * 1.2 * 100) / 100,
+      analysis: typeof parsed.analysis === 'string'
+        ? String(parsed.analysis).slice(0, 1000)
+        : 'Price based on current market conditions.',
+      factors: Array.isArray(parsed.factors)
+        ? parsed.factors
+            .filter((f: unknown) => typeof f === 'string')
+            .map((f: string) => String(f).slice(0, 200))
+            .slice(0, 10)
+        : ['Market demand', 'Quality', 'Location']
+    };
+  } catch (e) {
+    console.error('Failed to parse price data:', e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -60,17 +110,13 @@ Format your response as JSON with keys: suggestedPrice, minPrice, maxPrice, anal
     const data = await response.json();
     const content = data.choices[0].message.content;
     
-    console.log('AI response:', content);
+    console.log('AI response received');
 
-    // Parse JSON response
-    let priceData;
-    try {
-      // Try to extract JSON from markdown code blocks if present
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
-      const jsonStr = jsonMatch ? jsonMatch[1] : content;
-      priceData = JSON.parse(jsonStr);
-    } catch (e) {
-      console.error('Failed to parse AI response:', e);
+    // Parse and validate JSON response
+    const priceData = safeParsePriceData(content);
+    
+    if (!priceData) {
+      console.error('Failed to parse valid price data from AI response');
       throw new Error('Failed to parse AI response');
     }
 
@@ -81,7 +127,7 @@ Format your response as JSON with keys: suggestedPrice, minPrice, maxPrice, anal
   } catch (error) {
     console.error('Error in suggest-price function:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

@@ -7,6 +7,39 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Safe JSON parse with validation
+function safeParseRecommendations(jsonStr: string): Array<{ scheme_id: string; relevance_score: number; reason: string }> {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    const recommendations = parsed?.recommendations;
+    
+    if (!Array.isArray(recommendations)) {
+      console.warn('Recommendations is not an array, returning empty');
+      return [];
+    }
+    
+    // Validate and sanitize each recommendation
+    return recommendations
+      .filter((rec: unknown) => {
+        if (typeof rec !== 'object' || rec === null) return false;
+        const r = rec as Record<string, unknown>;
+        return typeof r.scheme_id === 'string' && r.scheme_id.length > 0;
+      })
+      .map((rec: Record<string, unknown>) => ({
+        scheme_id: String(rec.scheme_id).slice(0, 100),
+        relevance_score: typeof rec.relevance_score === 'number' 
+          ? Math.min(100, Math.max(0, rec.relevance_score)) 
+          : 50,
+        reason: typeof rec.reason === 'string' 
+          ? String(rec.reason).slice(0, 500) 
+          : 'No reason provided'
+      }));
+  } catch (e) {
+    console.error('Failed to parse recommendations:', e);
+    return [];
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -150,20 +183,22 @@ Return top ${limit} most relevant schemes ranked by relevance score (0-100).`;
     }
 
     const aiData = await aiResponse.json();
-    console.log('AI response:', JSON.stringify(aiData));
+    console.log('AI response received');
 
-    // Extract recommendations from tool call
+    // Extract and validate recommendations from tool call
     const toolCall = aiData.choices?.[0]?.message?.tool_calls?.[0];
-    const recommendations = toolCall ? JSON.parse(toolCall.function.arguments).recommendations : [];
+    const recommendations = toolCall 
+      ? safeParseRecommendations(toolCall.function.arguments)
+      : [];
 
     // Enrich recommendations with full scheme data
-    const enrichedRecommendations = recommendations.map((rec: any) => {
+    const enrichedRecommendations = recommendations.map((rec) => {
       const scheme = schemes?.find(s => s.id === rec.scheme_id);
       return {
         ...rec,
         scheme: scheme || null
       };
-    }).filter((rec: any) => rec.scheme !== null);
+    }).filter((rec) => rec.scheme !== null);
 
     console.log(`Returning ${enrichedRecommendations.length} recommendations`);
 

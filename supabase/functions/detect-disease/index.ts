@@ -5,6 +5,120 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+interface DiseaseDetection {
+  detection: {
+    diseaseDetected: boolean;
+    confidence: number;
+    diseaseName: string;
+    scientificName: string;
+    severity: string;
+    affectedParts: string[];
+  };
+  symptoms: string[];
+  causes: string[];
+  treatment: {
+    immediate: Array<{ step: number; action: string; urgency: string; safety?: string }>;
+    organicSolutions: Array<{ name: string; type: string; preparation: string; application: string; frequency: string; safety: string }>;
+    biologicalControl: Array<{ name: string; type: string; application: string; benefit: string }>;
+  };
+  prevention: string[];
+  organicPesticides: Array<{ name: string; activeIngredient: string; usage: string; safety: string }>;
+  whenToSeekHelp: string;
+  estimatedRecovery: string;
+}
+
+// Safe JSON parse with validation for disease detection
+function safeParseDetection(jsonStr: string): DiseaseDetection | null {
+  try {
+    const parsed = JSON.parse(jsonStr);
+    
+    // Validate required detection fields
+    const detection = parsed?.detection;
+    if (!detection || typeof detection !== 'object') {
+      console.warn('Missing or invalid detection object');
+      return null;
+    }
+    
+    // Sanitize and validate the detection data
+    const sanitized: DiseaseDetection = {
+      detection: {
+        diseaseDetected: Boolean(detection.diseaseDetected),
+        confidence: typeof detection.confidence === 'number' 
+          ? Math.min(100, Math.max(0, detection.confidence)) 
+          : 0,
+        diseaseName: typeof detection.diseaseName === 'string' 
+          ? String(detection.diseaseName).slice(0, 200) 
+          : 'Unknown',
+        scientificName: typeof detection.scientificName === 'string' 
+          ? String(detection.scientificName).slice(0, 200) 
+          : '',
+        severity: ['Mild', 'Moderate', 'Severe'].includes(detection.severity) 
+          ? detection.severity 
+          : 'Unknown',
+        affectedParts: Array.isArray(detection.affectedParts) 
+          ? detection.affectedParts.filter((p: unknown) => typeof p === 'string').map((p: string) => String(p).slice(0, 100)).slice(0, 10)
+          : []
+      },
+      symptoms: Array.isArray(parsed.symptoms) 
+        ? parsed.symptoms.filter((s: unknown) => typeof s === 'string').map((s: string) => String(s).slice(0, 200)).slice(0, 20)
+        : [],
+      causes: Array.isArray(parsed.causes) 
+        ? parsed.causes.filter((c: unknown) => typeof c === 'string').map((c: string) => String(c).slice(0, 200)).slice(0, 10)
+        : [],
+      treatment: {
+        immediate: Array.isArray(parsed.treatment?.immediate) 
+          ? parsed.treatment.immediate.slice(0, 10).map((item: Record<string, unknown>) => ({
+              step: typeof item.step === 'number' ? item.step : 0,
+              action: typeof item.action === 'string' ? String(item.action).slice(0, 500) : '',
+              urgency: typeof item.urgency === 'string' ? String(item.urgency).slice(0, 50) : 'medium',
+              safety: typeof item.safety === 'string' ? String(item.safety).slice(0, 200) : undefined
+            }))
+          : [],
+        organicSolutions: Array.isArray(parsed.treatment?.organicSolutions) 
+          ? parsed.treatment.organicSolutions.slice(0, 10).map((item: Record<string, unknown>) => ({
+              name: typeof item.name === 'string' ? String(item.name).slice(0, 100) : '',
+              type: typeof item.type === 'string' ? String(item.type).slice(0, 50) : '',
+              preparation: typeof item.preparation === 'string' ? String(item.preparation).slice(0, 500) : '',
+              application: typeof item.application === 'string' ? String(item.application).slice(0, 500) : '',
+              frequency: typeof item.frequency === 'string' ? String(item.frequency).slice(0, 100) : '',
+              safety: typeof item.safety === 'string' ? String(item.safety).slice(0, 200) : ''
+            }))
+          : [],
+        biologicalControl: Array.isArray(parsed.treatment?.biologicalControl) 
+          ? parsed.treatment.biologicalControl.slice(0, 10).map((item: Record<string, unknown>) => ({
+              name: typeof item.name === 'string' ? String(item.name).slice(0, 100) : '',
+              type: typeof item.type === 'string' ? String(item.type).slice(0, 50) : '',
+              application: typeof item.application === 'string' ? String(item.application).slice(0, 500) : '',
+              benefit: typeof item.benefit === 'string' ? String(item.benefit).slice(0, 200) : ''
+            }))
+          : []
+      },
+      prevention: Array.isArray(parsed.prevention) 
+        ? parsed.prevention.filter((p: unknown) => typeof p === 'string').map((p: string) => String(p).slice(0, 300)).slice(0, 10)
+        : [],
+      organicPesticides: Array.isArray(parsed.organicPesticides) 
+        ? parsed.organicPesticides.slice(0, 10).map((item: Record<string, unknown>) => ({
+            name: typeof item.name === 'string' ? String(item.name).slice(0, 100) : '',
+            activeIngredient: typeof item.activeIngredient === 'string' ? String(item.activeIngredient).slice(0, 100) : '',
+            usage: typeof item.usage === 'string' ? String(item.usage).slice(0, 300) : '',
+            safety: typeof item.safety === 'string' ? String(item.safety).slice(0, 200) : ''
+          }))
+        : [],
+      whenToSeekHelp: typeof parsed.whenToSeekHelp === 'string' 
+        ? String(parsed.whenToSeekHelp).slice(0, 500) 
+        : 'Consult an agricultural expert if symptoms persist.',
+      estimatedRecovery: typeof parsed.estimatedRecovery === 'string' 
+        ? String(parsed.estimatedRecovery).slice(0, 200) 
+        : 'Varies depending on severity.'
+    };
+    
+    return sanitized;
+  } catch (e) {
+    console.error('Failed to parse detection data:', e);
+    return null;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -141,7 +255,16 @@ If no disease is detected, set diseaseDetected to false and provide general plan
       );
     }
 
-    const detection = JSON.parse(detectionText);
+    // Parse and validate the detection data
+    const detection = safeParseDetection(detectionText);
+    
+    if (!detection) {
+      console.error('Failed to parse valid detection data');
+      return new Response(
+        JSON.stringify({ error: 'Failed to parse AI response' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
     
     console.log('Disease detection completed successfully');
     
@@ -158,7 +281,7 @@ If no disease is detected, set diseaseDetected to false and provide general plan
   } catch (error) {
     console.error('Error in detect-disease function:', error);
     return new Response(
-      JSON.stringify({ error: error.message || 'Internal server error' }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Internal server error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
