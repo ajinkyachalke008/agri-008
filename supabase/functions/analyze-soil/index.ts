@@ -147,17 +147,45 @@ function safeParseAnalysis(jsonStr: string): SoilAnalysis | null {
   }
 }
 
+// Input sanitization helpers
+function sanitizeTextInput(value: unknown, maxLength: number): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength).replace(/[<>{}[\]\\]/g, '');
+}
+
+function validateCoordinate(value: unknown, min: number, max: number): number | null {
+  if (typeof value !== 'number') return null;
+  if (isNaN(value) || value < min || value > max) return null;
+  return Math.round(value * 10000) / 10000;
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { image, location, context } = await req.json();
+    const body = await req.json();
     
-    if (!image) {
+    // Validate and sanitize inputs
+    const image = body.image;
+    const context = sanitizeTextInput(body.context, 500);
+    const location = body.location && typeof body.location === 'object' ? {
+      lat: validateCoordinate(body.location.lat, -90, 90),
+      lon: validateCoordinate(body.location.lon, -180, 180)
+    } : null;
+    
+    if (!image || typeof image !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Image is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Basic image data validation (should be base64 or URL)
+    if (image.length > 10000000) { // ~10MB limit
+      return new Response(
+        JSON.stringify({ error: 'Image too large' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

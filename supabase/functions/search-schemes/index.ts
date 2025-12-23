@@ -40,16 +40,28 @@ function safeParseSearchResults(jsonStr: string): Array<{ scheme_id: string; rel
   }
 }
 
+// Input validation helper
+function sanitizeInput(value: unknown, maxLength: number): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength).replace(/[<>{}[\]\\]/g, '');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { query, language = 'en', limit = 20 } = await req.json();
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const query = sanitizeInput(body.query, 500);
+    const language = ['en', 'mr'].includes(body.language) ? body.language : 'en';
+    const limit = Math.min(Math.max(1, parseInt(body.limit) || 20), 50);
+    
     console.log('Search schemes request:', { query, language, limit });
 
-    if (!query || query.trim().length === 0) {
+    if (!query || query.length === 0) {
       return new Response(
         JSON.stringify({ results: [], message: 'Empty query' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

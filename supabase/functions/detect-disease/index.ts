@@ -119,17 +119,36 @@ function safeParseDetection(jsonStr: string): DiseaseDetection | null {
   }
 }
 
+// Input sanitization helper
+function sanitizeTextInput(value: unknown, maxLength: number): string {
+  if (typeof value !== 'string') return '';
+  return value.trim().slice(0, maxLength).replace(/[<>{}[\]\\]/g, '');
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { image, plantType, symptoms } = await req.json();
+    const body = await req.json();
     
-    if (!image) {
+    // Validate and sanitize inputs
+    const image = body.image;
+    const plantType = sanitizeTextInput(body.plantType, 100);
+    const symptoms = sanitizeTextInput(body.symptoms, 500);
+    
+    if (!image || typeof image !== 'string') {
       return new Response(
         JSON.stringify({ error: 'Image is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // Basic image data validation (should be base64 or URL)
+    if (image.length > 10000000) { // ~10MB limit
+      return new Response(
+        JSON.stringify({ error: 'Image too large' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

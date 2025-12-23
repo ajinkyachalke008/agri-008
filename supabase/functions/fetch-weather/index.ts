@@ -35,16 +35,31 @@ function getWeatherFromCode(code: number) {
   return [weather];
 }
 
+// Input validation for coordinates
+function validateCoordinate(value: unknown, min: number, max: number): number | null {
+  const num = typeof value === 'number' ? value : parseFloat(String(value));
+  if (isNaN(num) || num < min || num > max) return null;
+  return Math.round(num * 10000) / 10000; // 4 decimal precision
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { latitude, longitude, language = 'en' } = await req.json();
+    const body = await req.json();
+    
+    // Validate and sanitize inputs
+    const latitude = validateCoordinate(body.latitude, -90, 90);
+    const longitude = validateCoordinate(body.longitude, -180, 180);
+    const language = ['en', 'mr', 'hi'].includes(body.language) ? body.language : 'en';
 
-    if (!latitude || !longitude) {
-      throw new Error('Latitude and longitude are required');
+    if (latitude === null || longitude === null) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid latitude or longitude. Latitude must be -90 to 90, longitude -180 to 180.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Fetching weather data from Open-Meteo for:', { latitude, longitude, language });
